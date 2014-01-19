@@ -7,4 +7,9 @@ describe Video do
     expect(Video.first).to eq(video)
   end
 
+  it "belongs to category" do
+    funny = Category.create!(title: "funny")
+    friends = Video.create!(title: "friends", description: "a funny television sitcom.", category: funny)
+    expect(friends.category).to eq(funny)
+  end
 end
