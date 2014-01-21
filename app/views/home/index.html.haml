@@ -1,5 +1,5 @@
-%article.video_category
-	%header
-		%h3 All Videos
-	= render 'videos/videos'
-
+- @category.each do |category|
+  %article.video_category
+    %header
+      %h3= category.title
+    = render 'videos/videos', videos: category.recent_videos
