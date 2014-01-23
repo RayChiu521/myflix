@@ -8,5 +8,5 @@ Myflix::Application.routes.draw do
     end
   end
 
-  root 'videos#index'
+  root 'home#index'
 end
