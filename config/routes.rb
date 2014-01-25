@@ -12,5 +12,5 @@ Myflix::Application.routes.draw do
 
   resources :users, only: [:new, :create]
 
-  root 'home#index'
+  root 'pages#front'
 end
