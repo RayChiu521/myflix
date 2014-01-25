@@ -2,8 +2,8 @@ Myflix::Application.routes.draw do
   get 'ui(/:action)', controller: 'ui'
   get 'genre', to: 'categories#index'
   get 'register', to: 'users#new'
-  get 'login', to: 'sessions#new'
-  post 'login', to: 'sessions#create'
+  get 'sign_in', to: 'sessions#new'
+  post 'sign_in', to: 'sessions#create'
 
   resources :videos, only: [:index, :show] do
     collection do
