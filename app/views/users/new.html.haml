@@ -6,7 +6,7 @@
           %h1 Register
         %fieldset
           = f.alert_message 'Please fix the error below.'
-          = f.email_field :email
+          = f.email_field :email, label: 'Email Address'
           = f.password_field :password
           = f.password_field :password_confirmation
           = f.text_field :full_name
