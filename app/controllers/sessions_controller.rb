@@ -15,4 +15,9 @@ class SessionsController < ApplicationController
       redirect_to sign_in_path, alert: "There's something wrong with your email or password."
     end
   end
+
+  def destroy
+    session[:user_id] = nil
+    redirect_to root_path, notice: "You've logged out."
+  end
 end
