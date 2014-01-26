@@ -2,9 +2,17 @@ class VideosController < ApplicationController
 
 	before_action :set_video, only: [:show]
 
-
 	def show
 	end
+
+  def index
+    @category = Category.all
+  end
+
+  def search
+    redirect_to root_path and return if params[:search_term].blank?
+    @videos = Video.search_by_title(params[:search_term])
+  end
 
 
 	private
