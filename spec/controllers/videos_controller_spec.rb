@@ -2,34 +2,44 @@ require 'spec_helper'
 
 describe VideosController do
 
-  context 'with a authenticated user' do
-    before do
+  describe "GET show" do
+    it "sets the @video for authenticated users" do
       session[:user_id] = Fabricate(:user).id
+      video = Fabricate(:video)
+      get :show, id: video.id
+      expect(assigns(:video)).to eq(video)
     end
 
-    describe "GET show" do
-      let(:video) { Fabricate(:video) }
-      before { get :show, id: video.id }
-
-      it { assigns(:video).should == video }
-      it { should render_template :show }
+    it "redirects to the sign in path for unauthenticated users" do
+      video = Fabricate(:video)
+      get :show, id: video.id
+      expect(response).to redirect_to sign_in_path
     end
+  end
 
-    describe "POST search" do
+  describe "POST search" do
+    context "with authenticated users" do
+      before do
+        session[:user_id] = Fabricate(:user).id
+      end
 
-      it "returns an array of results" do
-        friends = Fabricate(:video, title: 'Friends')
-        black_friday = Fabricate(:video, title: 'Black Friday')
-        harry_potter = Fabricate(:video, title: 'Harry Potter')
-
-        post :search, search_term: 'Fri'
-        assigns(:videos).should == [black_friday, friends]
+      it "sets the @videos" do
+        video = Fabricate(:video, title: "Friends")
+        post :search, search_term: "Fri"
+        expect(assigns(:videos)).to eq([video])
       end
 
       it "redirects to root path if search term is blank" do
-        post :search, search_term: ''
-        should redirect_to root_path
+        post :search
+        expect(response).to redirect_to root_path
       end
+    end
+
+
+    it "redirects to sign in path for unauthenticated users" do
+      video = Fabricate(:video, title: "Friends")
+      post :search, search_term: "Fri"
+      expect(response).to redirect_to sign_in_path
     end
   end
 end
