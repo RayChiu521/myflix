@@ -1,9 +1,10 @@
 class VideosController < ApplicationController
 
-	before_action :set_video, only: [:show]
+  before_action :set_video, only: [:show]
 
-	def show
-	end
+  def show
+   @reviews = @video.reviews
+  end
 
   def index
     @category = Category.all
@@ -15,9 +16,9 @@ class VideosController < ApplicationController
   end
 
 
-	private
+private
 
-		def set_video
-			@video = Video.find(params[:id])
-		end
+  def set_video
+    @video = Video.find(params[:id])
+  end
 end
