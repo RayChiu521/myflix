@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   skip_before_action :require_user, only: [:new, :create]
 
   def new
-    redirect_to home_path if logged_in?
+    return redirect_to home_path if logged_in?
     @user = User.new
   end
 
