@@ -17,6 +17,7 @@ Myflix::Application.routes.draw do
 
   resources :users, only: [:create]
   resources :categorys, only: [:show]
+  resources :queue_items, only: [:create]
 
   root 'pages#front'
 end
