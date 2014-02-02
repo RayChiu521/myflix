@@ -202,13 +202,6 @@ describe QueueItemsController do
           post :update_queue, queue_items: queue_items_hash
           expect(queue_item_position1.video.reviews.count).to eq(0)
         end
-
-        it "does not update review if rating is blank" do
-          queue_items_hash[queue_item_position1.id]["rating"] = ''
-          review = Fabricate(:review, creator: user, video: queue_item_position1.video, rating: 2)
-          post :update_queue, queue_items: queue_items_hash
-          expect(review.reload.rating).to eq(2)
-        end
       end
     end
 
