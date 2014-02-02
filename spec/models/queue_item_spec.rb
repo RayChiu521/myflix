@@ -47,10 +47,4 @@ describe QueueItem do
       expect(queue_item.category).to eq(category)
     end
   end
-
-  it "orders by position ASC" do
-    queue_item_position1 = Fabricate(:queue_item, position: 1)
-    queue_item_position2 = Fabricate(:queue_item, position: 2)
-    expect(QueueItem.all).to eq([queue_item_position1, queue_item_position2])
-  end
 end

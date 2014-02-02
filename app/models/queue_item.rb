@@ -3,8 +3,6 @@ class QueueItem < ActiveRecord::Base
   belongs_to :creator, class_name: "User", foreign_key: "user_id"
   belongs_to :video
 
-  default_scope { order("position") }
-
   def video_title
     video.title
   end

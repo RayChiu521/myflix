@@ -6,6 +6,6 @@ class User < ActiveRecord::Base
   validates :password, presence: true, on: :create
   validates :full_name, presence: true
 
-  has_many :queue_items
+  has_many :queue_items, -> { order("position") }
 
 end
