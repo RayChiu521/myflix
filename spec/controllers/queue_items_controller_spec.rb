@@ -77,7 +77,7 @@ describe QueueItemsController do
   describe "DELETE destroy" do
     context "with authenticated users" do
       let(:user) { Fabricate(:user) }
-      let(:queue_item) { Fabricate(:queue_item, creator: user) }
+      let(:queue_item) { Fabricate(:queue_item, creator: user, position: 1) }
       before do
         session[:user_id] = user.id
       end
@@ -97,6 +97,12 @@ describe QueueItemsController do
         session[:user_id] = another_user.id
         delete :destroy, id: queue_item.id
         expect(QueueItem.count).to eq(1)
+      end
+
+      it "normalize the remaining queue items" do
+        queue_item2 = Fabricate(:queue_item, creator: user, position: 2)
+        delete :destroy, id: queue_item.id
+        expect(queue_item2.reload.position).to eq(1)
       end
     end
 
