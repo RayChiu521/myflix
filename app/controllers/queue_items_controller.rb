@@ -16,6 +16,25 @@ class QueueItemsController < ApplicationController
     redirect_to my_queue_path
   end
 
+  def change_position
+    queue_items_params = params[:queue_items]
+    if queue_items_params
+      QueueItem.transaction do
+        queue_items_params.keys.each do |id|
+          raise ActiveRecord::Rollback unless queue_items_params[id][:position].match(/^\d+$/)
+          queue_item = QueueItem.find(id)
+          if current_user.queue_items.include?(queue_item)
+            queue_item.position = queue_items_params[id][:position]
+            queue_item.save
+          end
+        end
+        raise ActiveRecord::Rollback if current_user.queue_items.select("position").group("position").having("count(*) > 1").length > 0
+      end
+    end
+
+    redirect_to my_queue_path
+  end
+
 private
 
   def queue_video(video)
