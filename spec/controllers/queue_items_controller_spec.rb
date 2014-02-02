@@ -149,16 +149,33 @@ describe QueueItemsController do
           expect(response).to redirect_to my_queue_path
         end
 
-        it "does not update all received queue items if the positions are not integer" do
-          queue_items_hash[queue_item_position2.id]["position"] = 2.2
-          post :update_queue, queue_items: queue_items_hash
-          expect(user.queue_items).to eq([queue_item_position1, queue_item_position2])
+        context "if the positions are not integer" do
+          before do
+            queue_items_hash[queue_item_position2.id]["position"] = 2.2
+            post :update_queue, queue_items: queue_items_hash
+          end
+          it "does not update all received queue items" do
+            expect(user.queue_items).to eq([queue_item_position1, queue_item_position2])
+          end
+
+          it "sets the flash alert message" do
+            expect(flash[:alert]).to be_present
+          end
         end
 
-        it "does not update all received queue items if the positions are duplicated" do
-          queue_items_hash[queue_item_position1.id]["position"] = 1
-          post :update_queue, queue_items: queue_items_hash
-          expect(queue_item_position2.reload.position).to eq(2)
+        context "if the positions are duplicated" do
+          before do
+            queue_items_hash[queue_item_position1.id]["position"] = 1
+            post :update_queue, queue_items: queue_items_hash
+          end
+
+          it "does not update all received queue items" do
+            expect(queue_item_position2.reload.position).to eq(2)
+          end
+
+          it "sets the flash alert message" do
+            expect(flash[:alert]).to be_present
+          end
         end
       end
     end
