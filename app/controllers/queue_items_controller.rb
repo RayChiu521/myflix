@@ -16,7 +16,7 @@ class QueueItemsController < ApplicationController
     redirect_to my_queue_path
   end
 
-  def change_position
+  def update_queue
     queue_items_params = params[:queue_items]
     if queue_items_params
       QueueItem.transaction do
