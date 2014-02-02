@@ -52,7 +52,7 @@ describe QueueItemsController do
         let(:exists_video) { Fabricate(:video) }
         let(:new_video) { Fabricate(:video) }
         before do
-          QueueItem.create(video: exists_video, creator: user)
+          QueueItem.create(video: exists_video, creator: user, position: 1)
         end
 
         it "puts the video as the last one in the queue" do
@@ -128,39 +128,37 @@ describe QueueItemsController do
 
         it "updates the positions of all received queue items" do
           post :update_queue, queue_items: queue_items_hash
-          queue_item_position1.reload
-          queue_item_position2.reload
-          expect(queue_item_position1.position).to eq(2)
-          expect(queue_item_position2.position).to eq(1)
+          expect(user.queue_items).to eq([queue_item_position2, queue_item_position1])
         end
 
-        it "updates the queue items that associated with signed in user" do
-          another_user = Fabricate(:user)
-          session[:user_id] = another_user.id
+        it "normalize the position numbers" do
+          queue_items_hash[queue_item_position1.id]["position"] = 3
           post :update_queue, queue_items: queue_items_hash
-          expect(queue_item_position1.position).to eq(1)
-          expect(queue_item_position2.position).to eq(2)
+          expect(user.queue_items.map(&:position)).to eq([1, 2])
         end
       end
 
       context "with invalid inputs" do
-        it "redirect_to my queue page if did not pass queue items" do
+        it "redirects to the my queue page" do
+          post :update_queue, queue_items: queue_items_hash
+          expect(response).to redirect_to my_queue_path
+        end
+
+        it "redirects to my queue page if did not pass queue items" do
           post :update_queue
           expect(response).to redirect_to my_queue_path
         end
 
         it "does not update all received queue items if the positions are not integer" do
-          queue_items_hash[queue_item_position1.id]["position"] = 1.1
+          queue_items_hash[queue_item_position2.id]["position"] = 2.2
           post :update_queue, queue_items: queue_items_hash
-          expect(queue_item_position1.position).to eq(1)
-          expect(queue_item_position2.position).to eq(2)
+          expect(user.queue_items).to eq([queue_item_position1, queue_item_position2])
         end
 
         it "does not update all received queue items if the positions are duplicated" do
-          queue_items_hash[queue_item_position1.id]["position"] = 2
+          queue_items_hash[queue_item_position1.id]["position"] = 1
           post :update_queue, queue_items: queue_items_hash
-          expect(queue_item_position1.position).to eq(1)
-          expect(queue_item_position2.position).to eq(2)
+          expect(queue_item_position2.reload.position).to eq(2)
         end
       end
     end
@@ -168,6 +166,22 @@ describe QueueItemsController do
     it "redirects to signed in page for unauthenticated users" do
       post :update_queue, queue_items: {}
       expect(response).to redirect_to sign_in_path
+    end
+
+    context "with queue items that do not belong to the current user" do
+      it "does not change the queue items" do
+        current_user = Fabricate(:user)
+        another_user = Fabricate(:user)
+        session[:user_id] = current_user.id
+        queue_item1 = Fabricate(:queue_item, creator: another_user, position: 1)
+        queue_item2 = Fabricate(:queue_item, creator: current_user, position: 2)
+
+        post :update_queue, queue_items: {
+          queue_item1.id => { "position" => 2 },
+          queue_item2.id => { "position" => 1 }
+        }
+        expect(queue_item1.reload.position).to eq(1)
+      end
     end
   end
 

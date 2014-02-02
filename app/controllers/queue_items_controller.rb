@@ -19,17 +19,23 @@ class QueueItemsController < ApplicationController
   def update_queue
     queue_items_params = params[:queue_items]
     if queue_items_params
-      QueueItem.transaction do
-        queue_items_params.keys.each do |id|
-          raise ActiveRecord::Rollback unless queue_items_params[id][:position].match(/^\d+$/)
-          queue_item = QueueItem.find(id)
-          if current_user.queue_items.include?(queue_item)
-            queue_item.position = queue_items_params[id][:position]
-            queue_item.save
+      begin
+        QueueItem.transaction do
+          queue_items_params.keys.each do |id|
+            queue_item = QueueItem.find(id)
+            if current_user.queue_items.include?(queue_item)
+              queue_item.update_attributes!(position: queue_items_params[id][:position])
+            end
           end
+          raise ActiveRecord::Rollback if current_user.queue_items.select("position").group("position").having("count(*) > 1").length > 0
         end
-        raise ActiveRecord::Rollback if current_user.queue_items.select("position").group("position").having("count(*) > 1").length > 0
+      rescue ActiveRecord::RecordInvalid
+        return redirect_to my_queue_path
       end
+    end
+
+    current_user.queue_items.each_with_index do |queue_item, index|
+      queue_item.update_attributes(position: (index + 1))
     end
 
     redirect_to my_queue_path
