@@ -10,7 +10,7 @@ class QueueItem < ActiveRecord::Base
   end
 
   def rating
-    review = Review.where(user_id: creator.id, video_id: video.id).first
+    review = Review.where(user_id: creator.id, video_id: video.id).order("created_at DESC").first
     review.rating if review
   end
 

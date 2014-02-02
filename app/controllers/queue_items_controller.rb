@@ -52,10 +52,25 @@ private
       ActiveRecord::Base.transaction do
         queue_items_params.keys.each do |id|
           queue_item = QueueItem.find(id)
-          queue_item.update_attributes!(position: queue_items_params[id][:position]) if queue_item.creator == current_user
+          if queue_item.creator == current_user
+            queue_item.update_attributes!(position: queue_items_params[id][:position])
+            update_video_rating(queue_item.video, queue_items_params[id][:rating])
+          end
         end
         raise "Duplicated position numbers." if current_user.queue_items.select("position").group("position").having("count(*) > 1").length > 0
       end
+    end
+  end
+
+  def update_video_rating(video, rating)
+    unless rating.blank?
+      review = video.reviews.try(:first)
+      if review
+        review.rating = rating
+      else
+        review = video.reviews.build(creator: current_user, video: video, rating: rating)
+      end
+      review.save(validate: false)
     end
   end
 end

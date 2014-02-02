@@ -115,11 +115,13 @@ describe QueueItemsController do
   describe "POST update_queue" do
     context "with authenticated users" do
       let(:user) { Fabricate(:user) }
-      let(:queue_item_position1) { Fabricate(:queue_item, position: 1, creator: user) }
-      let(:queue_item_position2) { Fabricate(:queue_item, position: 2, creator: user) }
+      let(:video1) { Fabricate(:video) }
+      let(:video2) { Fabricate(:video) }
+      let(:queue_item_position1) { Fabricate(:queue_item, position: 1, creator: user, video: video1) }
+      let(:queue_item_position2) { Fabricate(:queue_item, position: 2, creator: user, video: video2) }
       let(:queue_items_hash) { {
-          queue_item_position1.id => { "position" => 2 },
-          queue_item_position2.id => { "position" => 1 }
+          queue_item_position1.id => { "position" => 2, "rating" => 1 },
+          queue_item_position2.id => { "position" => 1, "rating" => 2 }
         }
       }
       before do
@@ -141,6 +143,17 @@ describe QueueItemsController do
           queue_items_hash[queue_item_position1.id]["position"] = 3
           post :update_queue, queue_items: queue_items_hash
           expect(user.queue_items.map(&:position)).to eq([1, 2])
+        end
+
+        it "creates a review if haven't" do
+          post :update_queue, queue_items: queue_items_hash
+          expect(queue_item_position1.video.reviews.count).to eq(1)
+        end
+
+        it "updates rating of first review if have" do
+          review = Fabricate(:review, creator: user, video: queue_item_position1.video, rating: 2)
+          post :update_queue, queue_items: queue_items_hash
+          expect(review.reload.rating).to eq(1)
         end
       end
 
@@ -182,6 +195,19 @@ describe QueueItemsController do
           it "sets the flash alert message" do
             expect(flash[:alert]).to be_present
           end
+        end
+
+        it "does not create review if rating is blank" do
+          queue_items_hash[queue_item_position1.id]["rating"] = ''
+          post :update_queue, queue_items: queue_items_hash
+          expect(queue_item_position1.video.reviews.count).to eq(0)
+        end
+
+        it "does not update review if rating is blank" do
+          queue_items_hash[queue_item_position1.id]["rating"] = ''
+          review = Fabricate(:review, creator: user, video: queue_item_position1.video, rating: 2)
+          post :update_queue, queue_items: queue_items_hash
+          expect(review.reload.rating).to eq(2)
         end
       end
     end
