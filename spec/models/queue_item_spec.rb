@@ -4,6 +4,7 @@ describe QueueItem do
 
   it { should belong_to :creator }
   it { should belong_to :video }
+  it { should validate_numericality_of(:position).only_integer() }
 
   describe "#video_title" do
     it "returns the title of the associated video" do
