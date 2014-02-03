@@ -54,7 +54,7 @@ private
           queue_item = QueueItem.find(id)
           queue_item.update_attributes!(position: queue_items_params[id][:position], rating: queue_items_params[id][:rating]) if queue_item.creator == current_user
         end
-        raise "Duplicated position numbers." if current_user.queue_items.select("position").group("position").having("count(*) > 1").length > 0
+        raise "Duplicated position numbers." if current_user.duplicated_position_number?
       end
     end
   end

@@ -13,4 +13,8 @@ class User < ActiveRecord::Base
       queue_item.update_attributes(position: (index + 1))
     end
   end
+
+  def duplicated_position_number?
+    queue_items.select("position").group("position").having("count(*) > 1").length > 0
+  end
 end
