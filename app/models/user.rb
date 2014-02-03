@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   has_many :queue_items, -> { order("position") }
   has_many :reviews, -> { order("created_at DESC") }
   has_many :followships, class_name: "Followship", foreign_key: "follower_id"
-  has_many :followers, class_name: "Followship", foreign_key: "user_id"
+  has_many :followers, class_name: "Followship", foreign_key: "leader_id"
 
   def normalize_queue_item_positions
     queue_items.each_with_index do |queue_item, index|

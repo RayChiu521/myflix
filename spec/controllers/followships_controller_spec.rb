@@ -6,8 +6,8 @@ describe FollowshipsController do
     let(:current_user) { get_current_user }
     let(:user1) { Fabricate(:user) }
     let(:user2) { Fabricate(:user) }
-    let(:followship1) { Fabricate(:followship, user: user1, follower: current_user) }
-    let(:followship2) { Fabricate(:followship, user: user2, follower: current_user) }
+    let(:followship1) { Fabricate(:followship, leader: user1, follower: current_user) }
+    let(:followship2) { Fabricate(:followship, leader: user2, follower: current_user) }
 
     before do
       set_current_user
@@ -25,13 +25,11 @@ describe FollowshipsController do
 
   describe "DELETE destroy" do
     let(:current_user) { get_current_user }
-    let(:followed1) { Fabricate(:user) }
-    let(:followed2) { Fabricate(:user) }
+    let(:leader) { Fabricate(:user) }
+    let(:followship) { Fabricate(:followship, leader: leader, follower: current_user) }
 
     before do
       set_current_user
-      Fabricate(:followship, user: followed1, follower: current_user)
-      Fabricate(:followship, user: followed2, follower: current_user)
     end
 
     it_should_behave_like "require sign in" do
@@ -39,19 +37,19 @@ describe FollowshipsController do
     end
 
     it "redirects to the people page" do
-      delete :destroy, id: followed1.id
+      delete :destroy, id: followship.id
       expect(response).to redirect_to people_path
     end
 
-    it "deletes a user that current user followed" do
-      delete :destroy, id: followed1.id
-      expect(current_user.followships.reload.count).to eq(1)
+    it "deletes the followship if the current user is the follower" do
+      delete :destroy, id: followship.id
+      expect(current_user.followships.reload.count).to eq(0)
     end
 
-    it "does not delete a user if current user did not followship this user" do
+    it "does not delete the followship if the current user is not the follower" do
       another_user = Fabricate(:user)
-      new_follow = Fabricate(:followship, user: followed1, follower: another_user)
-      delete :destroy, id: new_follow.id
+      new_followship = Fabricate(:followship, leader: leader, follower: another_user)
+      delete :destroy, id: new_followship.id
       expect(another_user.followships.reload.count).to eq(1)
     end
   end

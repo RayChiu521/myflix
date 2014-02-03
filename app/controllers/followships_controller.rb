@@ -5,8 +5,8 @@ class FollowshipsController < ApplicationController
   end
 
   def destroy
-    followship = current_user.followships.where(["id = ?", params[:id]]).first
-    followship.destroy if followship
+    followship = Followship.find(params[:id])
+    followship.destroy if followship.follower == current_user
     redirect_to people_path
   end
 
