@@ -17,4 +17,8 @@ class User < ActiveRecord::Base
   def duplicated_position_number?
     queue_items.select("position").group("position").having("count(*) > 1").length > 0
   end
+
+  def queued_video?(video)
+    queue_items.map(&:video).include?(video)
+  end
 end
