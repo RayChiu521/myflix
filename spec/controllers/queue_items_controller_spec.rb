@@ -52,7 +52,7 @@ describe QueueItemsController do
         let(:exists_video) { Fabricate(:video) }
         let(:new_video) { Fabricate(:video) }
         before do
-          QueueItem.create(video: exists_video, creator: user)
+          QueueItem.create(video: exists_video, creator: user, position: 1)
         end
 
         it "puts the video as the last one in the queue" do
@@ -77,7 +77,7 @@ describe QueueItemsController do
   describe "DELETE destroy" do
     context "with authenticated users" do
       let(:user) { Fabricate(:user) }
-      let(:queue_item) { Fabricate(:queue_item, creator: user) }
+      let(:queue_item) { Fabricate(:queue_item, creator: user, position: 1) }
       before do
         session[:user_id] = user.id
       end
@@ -98,11 +98,132 @@ describe QueueItemsController do
         delete :destroy, id: queue_item.id
         expect(QueueItem.count).to eq(1)
       end
+
+      it "normalize the remaining queue items" do
+        queue_item2 = Fabricate(:queue_item, creator: user, position: 2)
+        delete :destroy, id: queue_item.id
+        expect(queue_item2.reload.position).to eq(1)
+      end
     end
 
     it "redirects to the sign in page for unauthenticated users" do
       delete :destroy, id: Fabricate(:queue_item).id
       expect(QueueItem.count).to eq(1)
+    end
+  end
+
+  describe "POST update_queue" do
+    context "with authenticated users" do
+      let(:user) { Fabricate(:user) }
+      let(:video1) { Fabricate(:video) }
+      let(:video2) { Fabricate(:video) }
+      let(:queue_item_position1) { Fabricate(:queue_item, position: 1, creator: user, video: video1) }
+      let(:queue_item_position2) { Fabricate(:queue_item, position: 2, creator: user, video: video2) }
+      let(:queue_items_hash) { {
+          queue_item_position1.id => { "position" => 2, "rating" => 1 },
+          queue_item_position2.id => { "position" => 1, "rating" => 2 }
+        }
+      }
+      before do
+        session[:user_id] = user.id
+      end
+
+      context "with valid inputs" do
+        it "redirects to the my queue page" do
+          post :update_queue, queue_items: queue_items_hash
+          expect(response).to redirect_to my_queue_path
+        end
+
+        it "updates the positions of all received queue items" do
+          post :update_queue, queue_items: queue_items_hash
+          expect(user.queue_items).to eq([queue_item_position2, queue_item_position1])
+        end
+
+        it "normalize the position numbers" do
+          queue_items_hash[queue_item_position1.id]["position"] = 3
+          post :update_queue, queue_items: queue_items_hash
+          expect(user.queue_items.map(&:position)).to eq([1, 2])
+        end
+
+        it "creates a review if haven't" do
+          post :update_queue, queue_items: queue_items_hash
+          expect(queue_item_position1.video.reviews.count).to eq(1)
+        end
+
+        it "updates rating of first review if have" do
+          review = Fabricate(:review, creator: user, video: queue_item_position1.video, rating: 2)
+          post :update_queue, queue_items: queue_items_hash
+          expect(review.reload.rating).to eq(1)
+        end
+      end
+
+      context "with invalid inputs" do
+        it "redirects to the my queue page" do
+          post :update_queue, queue_items: queue_items_hash
+          expect(response).to redirect_to my_queue_path
+        end
+
+        it "redirects to my queue page if did not pass queue items" do
+          post :update_queue
+          expect(response).to redirect_to my_queue_path
+        end
+
+        context "if the positions are not integer" do
+          before do
+            queue_items_hash[queue_item_position2.id]["position"] = 2.2
+            post :update_queue, queue_items: queue_items_hash
+          end
+          it "does not update all received queue items" do
+            expect(user.queue_items).to eq([queue_item_position1, queue_item_position2])
+          end
+
+          it "sets the flash alert message" do
+            expect(flash[:alert]).to be_present
+          end
+        end
+
+        context "if the positions are duplicated" do
+          before do
+            queue_items_hash[queue_item_position1.id]["position"] = 1
+            post :update_queue, queue_items: queue_items_hash
+          end
+
+          it "does not update all received queue items" do
+            expect(queue_item_position2.reload.position).to eq(2)
+          end
+
+          it "sets the flash alert message" do
+            expect(flash[:alert]).to be_present
+          end
+        end
+
+        it "does not create review if rating is blank" do
+          queue_items_hash[queue_item_position1.id]["rating"] = ''
+          post :update_queue, queue_items: queue_items_hash
+          expect(queue_item_position1.video.reviews.count).to eq(0)
+        end
+      end
+    end
+
+    it "redirects to signed in page for unauthenticated users" do
+      post :update_queue, queue_items: {}
+      expect(response).to redirect_to sign_in_path
+    end
+
+    context "with queue items that do not belong to the current user" do
+      it "does not change the queue items" do
+        current_user = Fabricate(:user)
+        another_user = Fabricate(:user)
+        session[:user_id] = current_user.id
+        queue_item1 = Fabricate(:queue_item, creator: another_user, position: 1)
+        queue_item2 = Fabricate(:queue_item, creator: current_user, position: 2)
+
+        post :update_queue, queue_items: {
+          queue_item1.id => { "position" => 2 },
+          queue_item2.id => { "position" => 1 }
+        }
+        expect(queue_item1.reload.position).to eq(1)
+      end
     end
   end
 
