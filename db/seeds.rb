@@ -25,3 +25,12 @@ friends = Video.create(category: comedy, title: 'Friends', description: "a tv si
 
 Review.create(creator: henryk, video: friends, rating: 5, content: "I like this show!")
 Review.create(creator: henryk, video: friends, rating: 2, content: "But it's too long!")
+
+huihong = User.create(email: 'huihong521@gmail.com', full_name: 'Hui Hong Chiu', password: 'pw')
+ray = User.create(email: 'ray_s521@hotmail.com', full_name: 'Ray Chiu', password: 'pw')
+david = User.create(email: 'david@example.com', full_name: 'David Wu', password: 'pw')
+
+
+Follow.create(user: huihong, follower: henryk)
+Follow.create(user: ray, follower: henryk)
+Follow.create(user: david, follower: henryk)
