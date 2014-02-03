@@ -50,9 +50,9 @@ private
     queue_items_params = params[:queue_items]
     if queue_items_params
       ActiveRecord::Base.transaction do
-        queue_items_params.keys.each do |id|
-          queue_item = QueueItem.find(id)
-          queue_item.update_attributes!(position: queue_items_params[id][:position], rating: queue_items_params[id][:rating]) if queue_item.creator == current_user
+        queue_items_params.each do |key, value|
+          queue_item = QueueItem.find(key)
+          queue_item.update_attributes!(position: value[:position], rating: value[:rating]) if queue_item.creator == current_user
         end
         raise "Duplicated position numbers." if current_user.duplicated_position_number?
       end
