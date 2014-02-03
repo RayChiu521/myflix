@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 
   skip_before_action :require_user, only: [:new, :create]
+  before_action :set_user, only: [:show]
 
   def new
     @user = User.new
@@ -16,11 +17,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def show
+  end
 
-  private
 
-    def user_params
-      params.require(:user).permit(:email, :password, :full_name)
-    end
+private
+
+  def user_params
+    params.require(:user).permit(:email, :password, :full_name)
+  end
+
+  def set_user
+    @user = User.find(params[:id])
+  end
 
 end
