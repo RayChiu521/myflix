@@ -33,4 +33,5 @@ group :test do
   gem 'shoulda-matchers'
   gem 'fabrication'
   gem 'faker'
+  gem 'capybara'
 end
