@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Follow do
+describe Followship do
 
   it { should belong_to(:user) }
   it { should belong_to(:follower) }

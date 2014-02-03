@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140203124550) do
+ActiveRecord::Schema.define(version: 20140203140509) do
 
   create_table "categories", force: true do |t|
     t.string   "title"
@@ -20,6 +20,13 @@ ActiveRecord::Schema.define(version: 20140203124550) do
   end
 
   create_table "follows", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "follower_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "followships", force: true do |t|
     t.integer  "user_id"
     t.integer  "follower_id"
     t.datetime "created_at"

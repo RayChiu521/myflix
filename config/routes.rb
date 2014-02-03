@@ -8,7 +8,7 @@ Myflix::Application.routes.draw do
   get 'home', to: 'videos#index'
   get 'my_queue', to: 'queue_items#index'
   post 'update_queue', to: 'queue_items#update_queue'
-  get 'people', to: 'follows#index'
+  get 'people', to: 'followships#index'
 
   resources :videos, only: [:index, :show] do
     collection do
@@ -20,7 +20,7 @@ Myflix::Application.routes.draw do
   resources :users, only: [:show, :create]
   resources :categorys, only: [:show]
   resources :queue_items, only: [:create, :destroy]
-  resources :follows, only: [:destroy]
+  resources :followships, only: [:destroy]
 
   root 'pages#front'
 end

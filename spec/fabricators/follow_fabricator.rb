@@ -1,3 +1,0 @@
-Fabricator(:follow) do
-
-end

@@ -31,6 +31,6 @@ ray = User.create(email: 'ray_s521@hotmail.com', full_name: 'Ray Chiu', password
 david = User.create(email: 'david@example.com', full_name: 'David Wu', password: 'pw')
 
 
-Follow.create(user: huihong, follower: henryk)
-Follow.create(user: ray, follower: henryk)
-Follow.create(user: david, follower: henryk)
+Followship.create(user: huihong, follower: henryk)
+Followship.create(user: ray, follower: henryk)
+Followship.create(user: david, follower: henryk)
