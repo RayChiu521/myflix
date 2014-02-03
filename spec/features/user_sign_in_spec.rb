@@ -4,10 +4,7 @@ feature "User sign in" do
   given(:henryk) { Fabricate(:user) }
 
   scenario "Signing in with correct credentials" do
-    visit sign_in_path
-    fill_in "Email Address", with: henryk.email
-    fill_in "Password", with: henryk.password
-    click_on "Sign in"
+    sign_in(henryk)
     page.should have_content henryk.full_name
   end
 
