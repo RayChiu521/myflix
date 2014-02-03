@@ -5,7 +5,7 @@ describe SessionsController do
   describe "GET new" do
     context "with authenticated users" do
       it "redirects to home page" do
-        session[:user_id] = Fabricate(:user).id
+        set_current_user
         get :new
         expect(response).to redirect_to home_path
       end
@@ -69,30 +69,27 @@ describe SessionsController do
   end
 
   describe "GET destroy" do
-    context "with authenticated users" do
-      before do
-        session[:user_id] = Fabricate(:user).id
-        get :destroy
-      end
-
-      it "clears the session[:user_id]" do
-        expect(session[:user_id]).to be_nil
-      end
-
-      it "redirects to the root path" do
-        expect(response).to redirect_to root_path
-      end
-
-      it "sets the notice message" do
-        expect(flash[:notice]).not_to be_blank
-      end
+    before do
+      set_current_user
     end
 
-    context "with unauthenticated users" do
-      it "redirects to the sign in page" do
-        get :destroy
-        expect(response).to redirect_to sign_in_path
-      end
+    it "clears the session[:user_id]" do
+      get :destroy
+      expect(session[:user_id]).to be_nil
+    end
+
+    it "redirects to the root path" do
+      get :destroy
+      expect(response).to redirect_to root_path
+    end
+
+    it "sets the notice message" do
+      get :destroy
+      expect(flash[:notice]).not_to be_blank
+    end
+
+    it_should_behave_like "require sign in" do
+      let(:action) { get :destroy }
     end
   end
 end

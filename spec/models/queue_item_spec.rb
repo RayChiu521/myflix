@@ -63,8 +63,6 @@ describe QueueItem do
         expect(Review.count).to eq(0)
       end
     end
-
-
   end
 
   describe "#category_title" do
