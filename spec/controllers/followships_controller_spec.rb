@@ -54,4 +54,36 @@ describe FollowshipsController do
     end
   end
 
+  describe "POST create" do
+    let(:current_user) { get_current_user }
+    before do
+      set_current_user
+    end
+
+    it_should_behave_like "require sign in" do
+      let(:action) { post :create, user_id: 1 }
+    end
+
+    it "redirects to the people page" do
+      post :create, user_id: Fabricate(:user).id
+      expect(response).to redirect_to people_path
+    end
+
+    it "creates the followship if the current user is not the follower" do
+      post :create, user_id: Fabricate(:user).id
+      expect(current_user.followships.count).to eq(1)
+    end
+
+    it "does not create the followship if the current user is the follower" do
+      leader = Fabricate(:user)
+      Followship.create(leader: leader, follower: current_user)
+      post :create, user_id: leader.id
+      expect(current_user.followships.count).to eq(1)
+    end
+
+    it "does not create the followship if the current user follows himself" do
+      post :create, user_id: current_user.id
+      expect(current_user.followships.count).to eq(0)
+    end
+  end
 end

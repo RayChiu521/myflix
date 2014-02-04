@@ -15,4 +15,22 @@ describe User do
     should validate_uniqueness_of(:email)
   end
 
+  describe "#followed?" do
+    let(:leader) { Fabricate(:user) }
+    let(:follower) { Fabricate(:user) }
+
+    before do
+      Followship.create(leader: leader, follower: follower)
+    end
+
+    it "returns true if is follower" do
+      expect(follower.followed?(leader)).to be_true
+    end
+
+    it "returns false if is not follower" do
+      not_leader = Fabricate(:user)
+      expect(follower.followed?(not_leader)).to be_false
+    end
+  end
+
 end
