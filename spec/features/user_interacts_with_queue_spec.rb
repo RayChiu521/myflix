@@ -16,7 +16,7 @@ feature "user interacts with the queue" do
     expect_video_to_be_in_queue(video)
 
     visit video_path(video)
-    expect_link_not_be_be_seen("+ My Queue")
+    expect_link_not_to_be_seen("+ My Queue")
   end
 
   scenario "user reorders videos in my queue" do
@@ -44,13 +44,12 @@ feature "user interacts with the queue" do
     page.should have_content video.title
   end
 
-  def expect_link_not_be_be_seen(link_text)
+  def expect_link_not_to_be_seen(link_text)
     page.should_not have_content link_text
   end
 
   def add_video_to_queue(video)
-    visit videos_path
-    find("a[href='/videos/#{video.id}']").click
+    click_on_video_on_home_page(video)
     click_link "+ My Queue"
   end
 

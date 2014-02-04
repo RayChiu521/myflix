@@ -28,4 +28,8 @@ class User < ActiveRecord::Base
   def followed?(leader)
     leader.in?(followships.map(&:leader))
   end
+
+  def can_follow?(leader)
+    !(followed?(leader) || self == leader)
+  end
 end

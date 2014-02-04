@@ -1,6 +1,6 @@
 require "spec_helper"
 
-feature "User followship" do
+feature "User following" do
   given(:current_user) { Fabricate(:user) }
   given(:leader) { Fabricate(:user) }
   given(:category) { Fabricate(:category) }
@@ -8,19 +8,23 @@ feature "User followship" do
 
   background do
     sign_in(current_user)
+    Fabricate(:review, creator: leader, video: video)
   end
 
   scenario "user follows another user" do
-      to_profile(leader)
-      follow_user
-      expect_content(leader.full_name)
+    click_on_video_on_home_page(video)
+    to_user_profile(leader)
+    follow_user
+    expect_content(leader.full_name)
   end
 
-  scenario "user not allow follow a user twice" do
-    to_profile(leader)
+  scenario "user can not follow another user twice" do
+    click_on_video_on_home_page(video)
+    to_user_profile(leader)
     follow_user
 
-    to_profile(leader)
+    click_on_video_on_home_page(video)
+    to_user_profile(leader)
     expect_link_not_to_be_seen("Follow")
   end
 
@@ -28,8 +32,8 @@ feature "User followship" do
     click_link "Follow"
   end
 
-  def to_profile(user)
-    visit user_path(user)
+  def to_user_profile(user)
+    click_link user.full_name
   end
 
   def expect_content(contenx_text)
