@@ -1,5 +1,4 @@
-class UsersMailer < ApplicationMailer
-  # default from: email_account
+class AppMailer < ApplicationMailer
 
   def welcome_email(user)
     @user = user
