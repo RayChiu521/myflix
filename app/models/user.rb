@@ -7,6 +7,9 @@ class User < ActiveRecord::Base
   validates :full_name, presence: true
 
   has_many :queue_items, -> { order("position") }
+  has_many :reviews, -> { order("created_at DESC") }
+  has_many :followships, class_name: "Followship", foreign_key: "follower_id"
+  has_many :followers, class_name: "Followship", foreign_key: "leader_id"
 
   def normalize_queue_item_positions
     queue_items.each_with_index do |queue_item, index|
@@ -20,5 +23,13 @@ class User < ActiveRecord::Base
 
   def queued_video?(video)
     queue_items.map(&:video).include?(video)
+  end
+
+  def followed?(leader)
+    leader.in?(followships.map(&:leader))
+  end
+
+  def can_follow?(leader)
+    !(followed?(leader) || self == leader)
   end
 end
