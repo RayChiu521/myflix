@@ -10,6 +10,7 @@ gem 'uglifier'
 gem 'jquery-rails'
 gem 'bootstrap_form'
 gem 'bcrypt-ruby', '~> 3.1.2'
+gem 'figaro'
 
 group :development do
   gem 'sqlite3'
