@@ -9,6 +9,10 @@ Myflix::Application.routes.draw do
   get 'my_queue', to: 'queue_items#index'
   post 'update_queue', to: 'queue_items#update_queue'
   get 'people', to: 'followships#index'
+  get 'forgot_password', to: 'users#forgot_password'
+  post 'email_password_token', to: 'users#email_password_token'
+  get 'confirm_password_reset', to: 'pages#confirm_password_reset'
+  get 'reset_password/:id', to: 'users#reset_password', as: 'reset_password'
 
   resources :videos, only: [:index, :show] do
     collection do

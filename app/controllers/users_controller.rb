@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  skip_before_action :require_user, only: [:new, :create]
+  skip_before_action :require_user, only: [:new, :create, :forgot_password, :email_password_token]
   before_action :set_user, only: [:show]
 
   def new
@@ -21,6 +21,18 @@ class UsersController < ApplicationController
   def show
   end
 
+  def forgot_password; end
+
+  def email_password_token
+    user = User.find_by_email(params[:email])
+    if user
+      user.generate_password_reset_token
+      AppMailer.password_reset_mail(user).deliver
+      redirect_to confirm_password_reset_path
+    else
+      redirect_to forgot_password_path, alert: "Incorrect email address!"
+    end
+  end
 
 private
 

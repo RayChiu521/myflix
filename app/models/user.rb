@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many :reviews, -> { order("created_at DESC") }
   has_many :followships, class_name: "Followship", foreign_key: "follower_id"
   has_many :followers, class_name: "Followship", foreign_key: "leader_id"
+  has_many :password_resets
 
   def normalize_queue_item_positions
     queue_items.each_with_index do |queue_item, index|
@@ -31,5 +32,20 @@ class User < ActiveRecord::Base
 
   def can_follow?(leader)
     !(followed?(leader) || self == leader)
+  end
+
+  def generate_password_reset_token
+    password_resets.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour)
+  end
+
+  def live_password_token
+    password_reset = password_resets.where("expiry_time >= ?", Time.now).order("expiry_time DESC").first
+    password_reset.token if password_reset
+  end
+
+private
+
+  def token_expired_in_hour
+    Time.now + 1.hour
   end
 end
