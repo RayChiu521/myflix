@@ -14,7 +14,7 @@ describe ForgotPasswordsController do
         expect(response).to redirect_to forgot_password_confirmation_path
       end
 
-      it "creates a password reset record" do
+      it "creates a reset password token" do
         post :create, email: user.email
         expect(ResetPasswordToken.count).to eq(1)
       end
@@ -40,7 +40,7 @@ describe ForgotPasswordsController do
         expect(response).to redirect_to forgot_password_path
       end
 
-      it "does not create a password reset record" do
+      it "does not create a reset password token" do
         post :create, email: incorrect_email
         expect(ResetPasswordToken.count).to eq(0)
       end

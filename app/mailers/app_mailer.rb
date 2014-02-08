@@ -5,7 +5,7 @@ class AppMailer < ApplicationMailer
     mail to: @user.email, subject: "Welcome to MyFlix"
   end
 
-  def password_reset_mail(user)
+  def send_forgot_password(user)
     @user = user
     mail to: @user.email, subject: "Password reset"
   end

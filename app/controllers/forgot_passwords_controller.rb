@@ -8,7 +8,7 @@ class ForgotPasswordsController < ApplicationController
     user = User.find_by_email(params[:email])
     if user
       user.generate_password_reset_token
-      AppMailer.password_reset_mail(user).deliver
+      AppMailer.send_forgot_password(user).deliver
       redirect_to forgot_password_confirmation_path
     else
       redirect_to forgot_password_path, alert: "Incorrect email address!"
