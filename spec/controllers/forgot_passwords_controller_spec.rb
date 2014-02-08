@@ -52,7 +52,7 @@ describe ForgotPasswordsController do
 
       it "sets the flash[:alert] message" do
         post :create, email: incorrect_email
-        expect(flash[:alert]).not_to be_blank
+        expect(flash[:alert]).to be_present
       end
     end
   end

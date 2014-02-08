@@ -39,7 +39,7 @@ describe User do
 
     it "creates a password reset record with token" do
       user.generate_password_reset_token
-      expect(ResetPasswordToken.first.token).not_to be_blank
+      expect(ResetPasswordToken.first.token).to be_present
     end
 
     it "creates a password reset record with expiry time that expired in an hour" do

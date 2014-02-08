@@ -17,7 +17,7 @@ describe PasswordResetsController do
   end
 
   describe "POST create" do
-    let(:user) { Fabricate(:user) }
+    let(:user) { Fabricate(:user, password: "old_password") }
     let(:token) do
       user.generate_password_reset_token
       user.live_password_token
@@ -30,15 +30,14 @@ describe PasswordResetsController do
         expect(response).to redirect_to sign_in_path
       end
 
-      it "updates user's password_digest" do
-        old_password_digest = user.password_digest
+      it "updates user's password" do
         post :create, token: token, password: "new_password"
-        expect(user.reload.password_digest).not_to eq(old_password_digest)
+        expect(user.reload.authenticate("new_password")).to be_true
       end
 
       it "sets the flash[:notice] message" do
         post :create, token: token, password: "new_password"
-        expect(flash[:notice]).not_to be_blank
+        expect(flash[:notice]).to be_present
       end
     end
 
@@ -49,14 +48,13 @@ describe PasswordResetsController do
       end
 
       it "does not update users password_digest" do
-        old_password_digest = user.password_digest
         post :create, token: token, password: ""
-        expect(user.reload.password_digest).to eq(old_password_digest)
+        expect(user.reload.authenticate("old_password")).to be_true
       end
 
       it "sets the flash[:alert] message" do
         post :create, token: token, password: ""
-        expect(flash[:alert]).not_to be_blank
+        expect(flash[:alert]).to be_present
       end
     end
   end
