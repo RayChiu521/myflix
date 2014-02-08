@@ -26,7 +26,7 @@ describe ForgotPasswordsController do
 
       it "sends out a email containing a url with password reset token" do
         post :create, email: user.email
-        url = reset_password_path(user.live_password_token)
+        url = password_reset_path(user.live_password_token)
         expect(ActionMailer::Base.deliveries.last.body).to include(url)
       end
     end

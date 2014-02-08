@@ -1,12 +1,12 @@
 %section.reset_password.container
   .row
     .col-sm-10.col-sm-offset-1
-      = form_tag save_password_path do
+      = form_tag password_resets_path do
         = hidden_field_tag :token, params[:id]
         %header
           %h1 Reset Your Password
         %fieldset.form-group
-          %label New Password
+          = label_tag :password, "New Password"
           .row
             .col-sm-4
               = password_field_tag :password, "", class: "form-control"

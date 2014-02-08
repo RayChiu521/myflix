@@ -9,10 +9,6 @@ Myflix::Application.routes.draw do
   get 'my_queue', to: 'queue_items#index'
   post 'update_queue', to: 'queue_items#update_queue'
   get 'people', to: 'followships#index'
-  get 'confirm_password_reset', to: 'pages#confirm_password_reset'
-  get 'reset_password/:id', to: 'users#reset_password', as: 'reset_password'
-  post 'save_password', to: 'users#save_password'
-  get 'invalid_token', to: 'pages#invalid_token'
 
   resources :videos, only: [:index, :show] do
     collection do
@@ -29,6 +25,9 @@ Myflix::Application.routes.draw do
   get 'forgot_password', to: 'forgot_passwords#new'
   get 'forgot_password_confirmation', to: 'forgot_passwords#confirm'
   resources :forgot_passwords, only: [:create]
+
+  resources :password_resets, only: [:show, :create]
+  get 'expired_token', to: 'password_resets#expired_token'
 
   root 'pages#front'
 end
