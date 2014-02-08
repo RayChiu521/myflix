@@ -52,16 +52,16 @@ describe User do
   describe "#live_password_token" do
     let(:user) { Fabricate(:user) }
 
-    context "with user has password_resets and at least one expiry_time column of password_resets is greater than or equal to Time.now" do
+    context "with user has password_resets and at least one expiry_time column of password_resets is greater than or equal to Time.now and is_used is false" do
 
       it "returns a token if only one password_reset is satisfy" do
-        password_reset = Fabricate(:password_reset, user: user, expiry_time: Time.now + 1.hour)
+        password_reset = Fabricate(:password_reset, user: user, expiry_time: Time.now + 1.hour, is_used: false)
         expect(user.live_password_token).to eq(password_reset.token)
       end
 
       it "returns a token with newest expiry_time if multiple password_resets are satisfy" do
-        password_reset1 = Fabricate(:password_reset, user: user, expiry_time: Time.now + 50.minute)
-        password_reset2 = Fabricate(:password_reset, user: user, expiry_time: Time.now + 55.minute)
+        password_reset1 = Fabricate(:password_reset, user: user, expiry_time: Time.now + 50.minute, is_used: false)
+        password_reset2 = Fabricate(:password_reset, user: user, expiry_time: Time.now + 55.minute, is_used: false)
         expect(user.live_password_token).to eq(password_reset2.token)
       end
     end
@@ -71,7 +71,12 @@ describe User do
     end
 
     it "returns nil if all expiry_time columns are less than Time.now" do
-      password_reset1 = Fabricate(:password_reset, user: user, expiry_time: Time.now - 1.minute)
+      Fabricate(:password_reset, user: user, expiry_time: Time.now - 1.minute, is_used: false)
+      expect(user.live_password_token).to be_nil
+    end
+
+    it "returns nil if all resets are already been used" do
+      Fabricate(:password_reset, user: user, expiry_time: Time.now, is_used: true)
       expect(user.live_password_token).to be_nil
     end
   end

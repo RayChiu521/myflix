@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  skip_before_action :require_user, only: [:new, :create, :forgot_password, :email_password_token]
+  skip_before_action :require_user, only: [:new, :create, :forgot_password, :email_password_token, :reset_password, :save_password]
   before_action :set_user, only: [:show]
 
   def new
@@ -31,6 +31,18 @@ class UsersController < ApplicationController
       redirect_to confirm_password_reset_path
     else
       redirect_to forgot_password_path, alert: "Incorrect email address!"
+    end
+  end
+
+  def reset_password
+    redirect_to invalid_token_path unless PasswordReset.token_alive?(params[:id])
+  end
+
+  def save_password
+    if PasswordReset.update_password!(params[:token], params[:password])
+      redirect_to sign_in_path, notice: "Your password has been changed."
+    else
+      redirect_to reset_password_path(params[:token]), alert: "Please input your new password."
     end
   end
 

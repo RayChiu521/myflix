@@ -13,6 +13,8 @@ Myflix::Application.routes.draw do
   post 'email_password_token', to: 'users#email_password_token'
   get 'confirm_password_reset', to: 'pages#confirm_password_reset'
   get 'reset_password/:id', to: 'users#reset_password', as: 'reset_password'
+  post 'save_password', to: 'users#save_password'
+  get 'invalid_token', to: 'pages#invalid_token'
 
   resources :videos, only: [:index, :show] do
     collection do

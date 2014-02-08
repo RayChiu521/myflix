@@ -35,11 +35,11 @@ class User < ActiveRecord::Base
   end
 
   def generate_password_reset_token
-    password_resets.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour)
+    password_resets.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour, is_used: false)
   end
 
   def live_password_token
-    password_reset = password_resets.where("expiry_time >= ?", Time.now).order("expiry_time DESC").first
+    password_reset = password_resets.where(["is_used = ? AND expiry_time >= ?", false, Time.now]).order("expiry_time DESC").first
     password_reset.token if password_reset
   end
 
