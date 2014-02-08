@@ -96,7 +96,7 @@ describe UsersController do
 
       it "creates a password reset record" do
         post :email_password_token, email: user.email
-        expect(PasswordReset.count).to eq(1)
+        expect(ResetPasswordToken.count).to eq(1)
       end
 
       it "sends out a email to the email address" do
@@ -122,7 +122,7 @@ describe UsersController do
 
       it "does not create a password reset record" do
         post :email_password_token, email: incorrect_email
-        expect(PasswordReset.count).to eq(0)
+        expect(ResetPasswordToken.count).to eq(0)
       end
 
       it "does not send out email" do

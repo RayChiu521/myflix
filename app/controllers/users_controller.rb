@@ -35,11 +35,11 @@ class UsersController < ApplicationController
   end
 
   def reset_password
-    redirect_to invalid_token_path unless PasswordReset.token_alive?(params[:id])
+    redirect_to invalid_token_path unless ResetPasswordToken.token_alive?(params[:id])
   end
 
   def save_password
-    if PasswordReset.update_password!(params[:token], params[:password])
+    if ResetPasswordToken.update_password!(params[:token], params[:password])
       redirect_to sign_in_path, notice: "Your password has been changed."
     else
       redirect_to reset_password_path(params[:token]), alert: "Please input your new password."

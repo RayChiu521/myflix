@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   has_many :reviews, -> { order("created_at DESC") }
   has_many :followships, class_name: "Followship", foreign_key: "follower_id"
   has_many :followers, class_name: "Followship", foreign_key: "leader_id"
-  has_many :password_resets
+  has_many :reset_password_tokens
 
   def normalize_queue_item_positions
     queue_items.each_with_index do |queue_item, index|
@@ -35,12 +35,12 @@ class User < ActiveRecord::Base
   end
 
   def generate_password_reset_token
-    password_resets.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour, is_used: false)
+    reset_password_tokens.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour, is_used: false)
   end
 
   def live_password_token
-    password_reset = password_resets.where(["is_used = ? AND expiry_time >= ?", false, Time.now]).order("expiry_time DESC").first
-    password_reset.token if password_reset
+    reset_password_token = reset_password_tokens.where(["is_used = ? AND expiry_time >= ?", false, Time.now]).order("expiry_time DESC").first
+    reset_password_token.token if reset_password_token
   end
 
 private

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140207132032) do
+ActiveRecord::Schema.define(version: 20140208030936) do
 
   create_table "categories", force: true do |t|
     t.string   "title"
@@ -36,15 +36,6 @@ ActiveRecord::Schema.define(version: 20140207132032) do
   add_index "followships", ["follower_id"], name: "index_followships_on_follower_id"
   add_index "followships", ["leader_id"], name: "index_followships_on_leader_id"
 
-  create_table "password_resets", force: true do |t|
-    t.integer  "user_id"
-    t.string   "token"
-    t.datetime "expiry_time"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "is_used"
-  end
-
   create_table "queue_items", force: true do |t|
     t.integer  "user_id"
     t.integer  "video_id"
@@ -55,6 +46,15 @@ ActiveRecord::Schema.define(version: 20140207132032) do
 
   add_index "queue_items", ["user_id"], name: "index_queue_items_on_user_id"
   add_index "queue_items", ["video_id"], name: "index_queue_items_on_video_id"
+
+  create_table "reset_password_tokens", force: true do |t|
+    t.integer  "user_id"
+    t.string   "token"
+    t.datetime "expiry_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_used"
+  end
 
   create_table "reviews", force: true do |t|
     t.integer  "user_id"
