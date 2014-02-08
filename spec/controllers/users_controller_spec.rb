@@ -81,62 +81,6 @@ describe UsersController do
     end
   end
 
-  describe "POST email_password_token" do
-    after do
-      ActionMailer::Base.deliveries.clear
-    end
-
-    context "with a exists email address" do
-      let(:user) { Fabricate(:user) }
-
-      it "redirects to confirm password reset page" do
-        post :email_password_token, email: user.email
-        expect(response).to redirect_to confirm_password_reset_path
-      end
-
-      it "creates a password reset record" do
-        post :email_password_token, email: user.email
-        expect(ResetPasswordToken.count).to eq(1)
-      end
-
-      it "sends out a email to the email address" do
-        post :email_password_token, email: user.email
-        expect(ActionMailer::Base.deliveries.last.to).to eq([user.email])
-      end
-
-      it "sends out a email containing a url with password reset token" do
-        post :email_password_token, email: user.email
-        url = reset_password_path(user.live_password_token)
-        expect(ActionMailer::Base.deliveries.last.body).to include(url)
-      end
-    end
-
-    context "with a not exists email address" do
-      let(:user) { Fabricate(:user) }
-      let(:incorrect_email) { "#{user.email}test" }
-
-      it "redirects to the forgot password page" do
-        post :email_password_token, email: incorrect_email
-        expect(response).to redirect_to forgot_password_path
-      end
-
-      it "does not create a password reset record" do
-        post :email_password_token, email: incorrect_email
-        expect(ResetPasswordToken.count).to eq(0)
-      end
-
-      it "does not send out email" do
-        post :email_password_token, email: incorrect_email
-        expect(ActionMailer::Base.deliveries).to be_empty
-      end
-
-      it "sets the flash[:alert] message" do
-        post :email_password_token, email: incorrect_email
-        expect(flash[:alert]).not_to be_blank
-      end
-    end
-  end
-
   describe "GET reset_password" do
     let(:user) { Fabricate(:user) }
     before { user.generate_password_reset_token }
