@@ -10,12 +10,14 @@ gem 'uglifier'
 gem 'jquery-rails'
 gem 'bootstrap_form'
 gem 'bcrypt-ruby', '~> 3.1.2'
+gem 'figaro'
 
 group :development do
   gem 'sqlite3'
   gem 'thin'
   gem "better_errors"
   gem "binding_of_caller"
+  gem "letter_opener"
 end
 
 group :production do

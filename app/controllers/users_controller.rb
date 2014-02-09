@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  skip_before_action :require_user, only: [:new, :create]
+  skip_before_action :require_user, only: [:new, :create, :reset_password, :save_password]
   before_action :set_user, only: [:show]
 
   def new
@@ -11,6 +11,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
+      AppMailer.welcome_email(@user).deliver
       redirect_to sign_in_path, notice: 'User was created.'
     else
       render :new
@@ -19,7 +20,6 @@ class UsersController < ApplicationController
 
   def show
   end
-
 
 private
 

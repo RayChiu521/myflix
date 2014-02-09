@@ -44,7 +44,7 @@ describe SessionsController do
       end
 
       it "sets the notice message" do
-        expect(flash[:notice]).not_to be_blank
+        expect(flash[:notice]).to be_present
       end
     end
 
@@ -63,7 +63,7 @@ describe SessionsController do
       end
 
       it "sets the alert message" do
-        expect(flash[:alert]).not_to be_blank
+        expect(flash[:alert]).to be_present
       end
     end
   end
@@ -85,7 +85,7 @@ describe SessionsController do
 
     it "sets the notice message" do
       get :destroy
-      expect(flash[:notice]).not_to be_blank
+      expect(flash[:notice]).to be_present
     end
 
     it_should_behave_like "require sign in" do

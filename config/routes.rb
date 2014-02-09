@@ -22,5 +22,12 @@ Myflix::Application.routes.draw do
   resources :queue_items, only: [:create, :destroy]
   resources :followships, only: [:create, :destroy]
 
+  get 'forgot_password', to: 'forgot_passwords#new'
+  get 'forgot_password_confirmation', to: 'forgot_passwords#confirm'
+  resources :forgot_passwords, only: [:create]
+
+  resources :password_resets, only: [:show, :create]
+  get 'expired_token', to: 'password_resets#expired_token'
+
   root 'pages#front'
 end

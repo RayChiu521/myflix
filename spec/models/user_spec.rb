@@ -9,6 +9,7 @@ describe User do
   it { should have_many(:reviews).order("created_at DESC") }
   it { should have_many(:followships) }
   it { should have_many(:followers) }
+  it { should have_many(:reset_password_tokens) }
 
   it do
     User.create(email: 'test@test.com', password: 'test', password_confirmation: 'test', full_name: 'test')
@@ -30,6 +31,53 @@ describe User do
     it "returns false if is not follower" do
       not_leader = Fabricate(:user)
       expect(follower.followed?(not_leader)).to be_false
+    end
+  end
+
+  describe "#generate_password_reset_token" do
+    let(:user) { Fabricate(:user) }
+
+    it "creates a password reset record with token" do
+      user.generate_password_reset_token
+      expect(ResetPasswordToken.first.token).to be_present
+    end
+
+    it "creates a password reset record with expiry time that expired in an hour" do
+      user.generate_password_reset_token
+      expect(ResetPasswordToken.first.expiry_time).to be >= Time.now + 50.minute
+      expect(ResetPasswordToken.first.expiry_time).to be <= Time.now + 70.minute
+    end
+  end
+
+  describe "#live_password_token" do
+    let(:user) { Fabricate(:user) }
+
+    context "with user has password_resets and at least one expiry_time column of password_resets is greater than or equal to Time.now and is_used is false" do
+
+      it "returns a token if only one reset_password_token is satisfy" do
+        reset_password_token = Fabricate(:reset_password_token, user: user, expiry_time: Time.now + 1.hour, is_used: false)
+        expect(user.live_password_token).to eq(reset_password_token.token)
+      end
+
+      it "returns a token with newest expiry_time if multiple password_resets are satisfy" do
+        password_reset1 = Fabricate(:reset_password_token, user: user, expiry_time: Time.now + 50.minute, is_used: false)
+        password_reset2 = Fabricate(:reset_password_token, user: user, expiry_time: Time.now + 55.minute, is_used: false)
+        expect(user.live_password_token).to eq(password_reset2.token)
+      end
+    end
+
+    it "returns nil if user's password_resets is empty" do
+      expect(user.live_password_token).to be_nil
+    end
+
+    it "returns nil if all expiry_time columns are less than Time.now" do
+      Fabricate(:reset_password_token, user: user, expiry_time: Time.now - 1.minute, is_used: false)
+      expect(user.live_password_token).to be_nil
+    end
+
+    it "returns nil if all resets are already been used" do
+      Fabricate(:reset_password_token, user: user, expiry_time: Time.now, is_used: true)
+      expect(user.live_password_token).to be_nil
     end
   end
 
