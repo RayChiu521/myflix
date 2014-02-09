@@ -36,10 +36,6 @@ feature "User following" do
     click_link user.full_name
   end
 
-  def expect_content(contenx_text)
-    page.should have_content contenx_text
-  end
-
   def expect_link_not_to_be_seen(link_text)
     page.should_not have_content link_text
   end

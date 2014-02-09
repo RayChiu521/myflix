@@ -41,7 +41,7 @@ feature "user interacts with the queue" do
 
   def expect_video_to_be_in_queue(video)
     visit my_queue_path
-    page.should have_content video.title
+    expect_content(video.title)
   end
 
   def expect_link_not_to_be_seen(link_text)
@@ -55,10 +55,6 @@ feature "user interacts with the queue" do
 
   def update_queue
     click_button("Update Instant Queue")
-  end
-
-  def expect_content(content_text)
-    page.should have_content content_text
   end
 
   def video_input_in_queue(video)
