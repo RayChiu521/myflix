@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  skip_before_action :require_user, only: [:new, :create, :reset_password, :save_password]
+  skip_before_action :require_user, only: [:new, :create, :reset_password, :save_password, :new_with_invitation_token]
   before_action :set_user, only: [:show]
 
   def new
@@ -24,6 +24,17 @@ class UsersController < ApplicationController
   def show
   end
 
+  def new_with_invitation_token
+    invitation = Invitation.where(token: params[:token]).first
+    if invitation
+      @user = User.new(email: invitation.recipient_email)
+      @invitation_token = invitation.token
+      render :new
+    else
+      redirect_to expired_token_path
+    end
+  end
+
 private
 
   def user_params
@@ -35,9 +46,10 @@ private
   end
 
   def bifollow(user)
-    unless params[:invitor].blank?
-      leader = User.find(params[:invitor])
-      leader.bifollow!(user)
+    if params[:invitation_token].present?
+      invitation = Invitation.where(token: params[:invitation_token]).first
+      invitation.invitor.bifollow!(user)
+      invitation.update_attributes(token: nil)
     end
   end
 

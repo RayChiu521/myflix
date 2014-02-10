@@ -10,10 +10,9 @@ class AppMailer < ApplicationMailer
     mail to: @user.email, subject: "Password reset"
   end
 
-  def invite_friend(invitor, friend)
-    @invitor = invitor
-    @friend = friend
-    mail to: @friend[:email], subject: "MyFLiX Invitation"
+  def send_invitation(invitation)
+    @invitation = invitation
+    mail to: invitation.recipient_email, subject: "Invitation to join MyFLiX"
   end
 
 end

@@ -1,0 +1,10 @@
+!!! 5
+%html(lang="en-US")
+  %head
+  %body
+    %p Hello #{@invitation.recipient_name}, this is an invitation from your friend #{@invitation.invitor.full_name} and here is his/her message:
+    %p #{@invitation.message}
+    %p
+      We hope you can come to our website
+      = link_to "MyFLiX", register_with_token_url(@invitation.token)
+    %p Thanks.

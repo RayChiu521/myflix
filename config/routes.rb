@@ -2,6 +2,7 @@ Myflix::Application.routes.draw do
   get 'ui(/:action)', controller: 'ui'
   get 'genre', to: 'categories#index'
   get 'register', to: 'users#new'
+  get 'register/:token', to: 'users#new_with_invitation_token', as: 'register_with_token'
   get 'sign_in', to: 'sessions#new'
   post 'sign_in', to: 'sessions#create'
   get 'sign_out', to: 'sessions#destroy'
@@ -27,10 +28,10 @@ Myflix::Application.routes.draw do
   resources :forgot_passwords, only: [:create]
 
   resources :password_resets, only: [:show, :create]
-  get 'expired_token', to: 'password_resets#expired_token'
 
-  get 'invite_friend', to: 'invite_friends#new'
-  resources :invite_friends, only: [:create]
+  get 'invitation', to: 'invitations#new'
+  resources :invitations, only: [:create]
 
+  get 'expired_token', to: 'pages#expired_token'
   root 'pages#front'
 end

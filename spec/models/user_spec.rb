@@ -100,7 +100,7 @@ describe User do
     let(:monica) { Fabricate(:user) }
     let(:phoebe) { Fabricate(:user) }
 
-    it "follows leader if not follows self" do
+    it "follows leader if not follows one self" do
       expect(monica.follow!(phoebe)).to be_true
     end
 
@@ -113,7 +113,7 @@ describe User do
     let(:monica) { Fabricate(:user) }
     let(:phoebe) { Fabricate(:user) }
 
-    it "follows each other if not follows self" do
+    it "follows each other if not follows one self" do
       expect(monica.bifollow!(phoebe)).to be_true
       expect(phoebe.bifollow!(monica)).to be_true
     end
