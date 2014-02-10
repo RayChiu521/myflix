@@ -9,15 +9,7 @@ Myflix::Application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default_options = { from: ENV["EMAIL_ACCOUNT"] }
   config.action_mailer.default_url_options = { host: ENV["WEBSITE_HOST"] }
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address:              'smtp.gmail.com',
-    port:                 587,
-    domain:               'myflix.com',
-    user_name:            ENV["GMAIL_USERNAME"],
-    password:             ENV["GMAIL_PASSWORD"],
-    authentication:       'plain',
-    enable_starttls_auto: true  }
+  config.action_mailer.delivery_method = :letter_opener
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
