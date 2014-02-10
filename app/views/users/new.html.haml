@@ -2,6 +2,7 @@
   .row
     .col-sm-10.col-sm-offset-1
       = bootstrap_form_for @user, style: :horizontal, right: 'col-sm-6' do |f|
+        = hidden_field_tag :invitor, params[:invitor]
         %header
           %h1 Register
         %fieldset

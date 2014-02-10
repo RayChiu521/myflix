@@ -29,5 +29,8 @@ Myflix::Application.routes.draw do
   resources :password_resets, only: [:show, :create]
   get 'expired_token', to: 'password_resets#expired_token'
 
+  get 'invite_friend', to: 'invite_friends#new'
+  resources :invite_friends, only: [:create]
+
   root 'pages#front'
 end

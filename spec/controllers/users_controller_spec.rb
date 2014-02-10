@@ -7,6 +7,21 @@ describe UsersController do
       get :new
       expect(assigns(:user)).to be_a_new(User)
     end
+
+    context "from the invitation email" do
+      let(:monica) { Fabricate(:user) }
+      let(:phoebe) { "phoebe@email.com" }
+
+      it "sets the @user with friend's email address" do
+        get :new, invitor: monica.id, email: phoebe
+        expect(assigns(:user).email).to eq(phoebe)
+      end
+
+      it "sets the @invitor" do
+        get :new, invitor: monica.id, email: phoebe
+        expect(assigns(:invitor)).to eq(monica.id.to_s)
+      end
+    end
   end
 
   describe "POST create" do
@@ -42,6 +57,19 @@ describe UsersController do
 
       it "sets the @user" do
         expect(assigns(:user)).to be_a_new(User)
+      end
+    end
+
+    context "from the invitation email" do
+      let(:monica) { Fabricate(:user) }
+
+      before do
+        post :create, invitor: monica.id, user: user_hash
+      end
+
+      it "creates bidirectional followships between invitor and new user" do
+        expect(monica.reload.followed?(assigns(:user))).to be_true
+        expect(assigns(:user).reload.followed?(monica)).to be_true
       end
     end
 
