@@ -26,6 +26,19 @@ class User < ActiveRecord::Base
     queue_items.map(&:video).include?(video)
   end
 
+  def generate_password_reset_token
+    reset_password_tokens.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour, is_used: false)
+  end
+
+  def live_password_token
+    reset_password_token = reset_password_tokens.where(["is_used = ? AND expiry_time >= ?", false, Time.now]).order("expiry_time DESC").first
+    reset_password_token.token if reset_password_token
+  end
+
+  def self.registered?(email)
+    !email.blank? && where(email: email).count > 0
+  end
+
   def followed?(leader)
     leader.in?(followships.map(&:leader))
   end
@@ -34,13 +47,13 @@ class User < ActiveRecord::Base
     !(followed?(leader) || self == leader)
   end
 
-  def generate_password_reset_token
-    reset_password_tokens.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour, is_used: false)
+  def follow!(leader)
+    Followship.create(leader: leader, follower: self) if self.can_follow?(leader)
   end
 
-  def live_password_token
-    reset_password_token = reset_password_tokens.where(["is_used = ? AND expiry_time >= ?", false, Time.now]).order("expiry_time DESC").first
-    reset_password_token.token if reset_password_token
+  def bifollow!(leader)
+    follow!(leader)
+    leader.follow!(self)
   end
 
 private

@@ -16,24 +16,6 @@ describe User do
     should validate_uniqueness_of(:email)
   end
 
-  describe "#followed?" do
-    let(:leader) { Fabricate(:user) }
-    let(:follower) { Fabricate(:user) }
-
-    before do
-      Followship.create(leader: leader, follower: follower)
-    end
-
-    it "returns true if is follower" do
-      expect(follower.followed?(leader)).to be_true
-    end
-
-    it "returns false if is not follower" do
-      not_leader = Fabricate(:user)
-      expect(follower.followed?(not_leader)).to be_false
-    end
-  end
-
   describe "#generate_password_reset_token" do
     let(:user) { Fabricate(:user) }
 
@@ -81,4 +63,63 @@ describe User do
     end
   end
 
+  describe ".registered?" do
+    it "returns false if the email is blank" do
+      expect(User.registered?("")).to be_false
+    end
+
+    it "returns false if the email has been registered" do
+      expect(User.registered?("monica@example.com")).to be_false
+    end
+
+    it "returns false if the email has not been registered" do
+      monica = Fabricate(:user)
+      expect(User.registered?(monica.email)).to be_true
+    end
+  end
+
+  describe "#followed?" do
+    let(:leader) { Fabricate(:user) }
+    let(:follower) { Fabricate(:user) }
+
+    before do
+      Followship.create(leader: leader, follower: follower)
+    end
+
+    it "returns true if is follower" do
+      expect(follower.followed?(leader)).to be_true
+    end
+
+    it "returns false if is not follower" do
+      not_leader = Fabricate(:user)
+      expect(follower.followed?(not_leader)).to be_false
+    end
+  end
+
+  describe "follow!" do
+    let(:monica) { Fabricate(:user) }
+    let(:phoebe) { Fabricate(:user) }
+
+    it "follows leader if not follows self" do
+      expect(monica.follow!(phoebe)).to be_true
+    end
+
+    it "does not follow leader if follows self" do
+      expect(monica.follow!(monica)).to be_false
+    end
+  end
+
+  describe "bifollow!" do
+    let(:monica) { Fabricate(:user) }
+    let(:phoebe) { Fabricate(:user) }
+
+    it "follows each other if not follows self" do
+      expect(monica.bifollow!(phoebe)).to be_true
+      expect(phoebe.bifollow!(monica)).to be_true
+    end
+
+    it "does not follow each other if follows self" do
+      expect(monica.bifollow!(monica)).to be_false
+    end
+  end
 end
