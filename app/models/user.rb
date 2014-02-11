@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   end
 
   def generate_password_reset_token
-    reset_password_tokens.create(token: SecureRandom.urlsafe_base64, expiry_time: token_expired_in_hour, is_used: false)
+    reset_password_tokens.create(expiry_time: token_expired_in_hour, is_used: false)
   end
 
   def live_password_token

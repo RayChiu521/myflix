@@ -83,4 +83,11 @@ describe ResetPasswordToken do
     end
   end
 
+  it_should_behave_like "tokenable" do
+    subject do
+      monica = Fabricate(:user)
+      monica.generate_password_reset_token
+      monica.reset_password_tokens.last
+    end
+  end
 end
