@@ -8,6 +8,6 @@ end
 
 shared_examples "tokenable" do
   it "creating with token" do
-    expect(subject.token).to be_present
+    expect(object.token).to be_present
   end
 end
