@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140208030936) do
+ActiveRecord::Schema.define(version: 20140210100013) do
 
   create_table "categories", force: true do |t|
     t.string   "title"
@@ -35,6 +35,16 @@ ActiveRecord::Schema.define(version: 20140208030936) do
 
   add_index "followships", ["follower_id"], name: "index_followships_on_follower_id"
   add_index "followships", ["leader_id"], name: "index_followships_on_leader_id"
+
+  create_table "invitations", force: true do |t|
+    t.integer  "user_id"
+    t.string   "recipient_name"
+    t.string   "recipient_email"
+    t.text     "message"
+    t.string   "token"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "queue_items", force: true do |t|
     t.integer  "user_id"

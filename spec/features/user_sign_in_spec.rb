@@ -5,7 +5,7 @@ feature "User sign in" do
 
   scenario "Signing in with correct credentials" do
     sign_in(henryk)
-    page.should have_content henryk.full_name
+    expect_content(henryk.full_name)
   end
 
   scenario "Signing in with incorrect credentials" do
@@ -13,6 +13,6 @@ feature "User sign in" do
     fill_in "Email Address", with: henryk.email
     fill_in "Password", with: "#{henryk.password}abc"
     click_on "Sign in"
-    page.should have_content "There's something wrong with your email or password."
+    expect_content("There's something wrong with your email or password.")
   end
 end

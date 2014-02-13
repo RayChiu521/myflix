@@ -83,4 +83,7 @@ describe ResetPasswordToken do
     end
   end
 
+  it_should_behave_like "tokenable" do
+    let(:object) { Fabricate(:reset_password_token) }
+  end
 end

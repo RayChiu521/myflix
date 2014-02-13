@@ -18,8 +18,15 @@ def sign_in(user=nil)
   click_on "Sign in"
 end
 
+def sign_out
+  visit sign_out_path
+end
 
 def click_on_video_on_home_page(video)
   visit home_path
   find("a[href='/videos/#{video.id}']").click
+end
+
+def expect_content(contenx_text)
+  page.should have_content contenx_text
 end

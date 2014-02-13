@@ -1,4 +1,8 @@
+require_relative '../../lib/tokenable'
+
 class ResetPasswordToken < ActiveRecord::Base
+
+  include Tokenable
 
   belongs_to :user
 
