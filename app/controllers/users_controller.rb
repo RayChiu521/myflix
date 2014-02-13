@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  skip_before_action :require_user, only: [:new, :create, :reset_password, :save_password, :new_with_invitation_token]
+  skip_before_action :require_user, only: [:new, :create, :new_with_invitation_token]
   before_action :set_user, only: [:show]
 
   def new
