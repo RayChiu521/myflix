@@ -11,6 +11,8 @@ gem 'jquery-rails'
 gem 'bootstrap_form'
 gem 'bcrypt-ruby', '~> 3.1.2'
 gem 'figaro'
+gem 'sidekiq'
+gem 'foreman'
 
 group :development do
   gem 'sqlite3'
@@ -23,6 +25,7 @@ end
 group :production do
   gem 'pg'
   gem 'rails_12factor'
+  gem 'unicorn'
 end
 
 group :test, :development do
