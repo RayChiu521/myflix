@@ -11,6 +11,7 @@ gem 'jquery-rails'
 gem 'bootstrap_form'
 gem 'bcrypt-ruby', '~> 3.1.2'
 gem 'figaro'
+gem 'sidekiq'
 
 group :development do
   gem 'sqlite3'
