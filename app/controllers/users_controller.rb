@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class UsersController < AuthenticatedController
 
   skip_before_action :require_user, only: [:new, :create, :new_with_invitation_token]
   before_action :set_user, only: [:show]

@@ -1,4 +1,4 @@
-class PagesController < ApplicationController
+class PagesController < AuthenticatedController
 
   skip_before_action :require_user, only: [:front, :invalid_token]
 

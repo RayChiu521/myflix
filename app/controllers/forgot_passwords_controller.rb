@@ -1,4 +1,4 @@
-class ForgotPasswordsController < ApplicationController
+class ForgotPasswordsController < AuthenticatedController
 
   skip_before_action :require_user, only: [:new, :create, :confirm]
 
