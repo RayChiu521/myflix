@@ -12,7 +12,7 @@ Myflix::Application.routes.draw do
   get 'people', to: 'followships#index'
 
   namespace :admin do
-    resources :videos, only: [:new]
+    resources :videos, only: [:new, :create]
   end
 
   resources :videos, only: [:index, :show] do
