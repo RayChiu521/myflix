@@ -34,3 +34,5 @@ david = User.create(email: 'david@example.com', full_name: 'David Wu', password:
 Followship.create(leader: huihong, follower: henryk)
 Followship.create(leader: ray, follower: henryk)
 Followship.create(leader: david, follower: henryk)
+
+admin = User.create(email: 'admin@example.com', full_name: 'Admin', password: 'admin', admin: true)
