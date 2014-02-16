@@ -14,6 +14,7 @@ gem 'figaro'
 gem 'sidekiq'
 gem 'foreman'
 gem 'fog'
+gem 'carrierwave'
 
 group :development do
   gem 'sqlite3'
