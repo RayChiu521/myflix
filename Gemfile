@@ -13,6 +13,7 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 gem 'figaro'
 gem 'sidekiq'
 gem 'foreman'
+gem 'fog'
 
 group :development do
   gem 'sqlite3'
