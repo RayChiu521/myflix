@@ -12,5 +12,5 @@
           = f.text_field :full_name
           = hidden_field_tag :invitation_token, @invitation_token
         = f.form_group do
-          = f.submit 'Sign Up', class: 'btn btn-primary'
+          %script(src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="#{ENV['STRIPE_PUBLISHABLE_KEY']}" data-name="MyFLiX" data-description="$9.99 for year fee" data-amount="999")
           = link_to 'Back', root_path, class: 'btn btn-default'

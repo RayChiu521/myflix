@@ -15,7 +15,19 @@ class UsersController < AuthenticatedController
     if @user.save
       bifollow(@user)
       AppMailer.delay.welcome_email(@user)
-      redirect_to sign_in_path, notice: 'User was created.'
+      Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+      begin
+        charge = Stripe::Charge.create(
+          :amount => 999,
+          :currency => "usd",
+          :card => params[:stripeToken],
+          :description => "One year charge for #{@user.email}"
+        )
+        flash[:notice] = 'User was created.'
+      rescue Stripe::CardError => e
+        flash['alert'] = 'User was created but changing failed!'
+      end
+      redirect_to sign_in_path
     else
       render :new
     end
