@@ -16,3 +16,7 @@
 
 # Ignore application configuration
 /config/application.yml
+.DS_Store
+
+# Ignore all upload files
+/public/uploads

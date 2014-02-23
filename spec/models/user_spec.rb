@@ -16,6 +16,11 @@ describe User do
     should validate_uniqueness_of(:email)
   end
 
+  it "default admin value is false" do
+    monica = User.create(email: 'monica@example.com', password: 'password', password_confirmation: 'password', full_name: 'Monica Geller')
+    expect(monica.admin?).to be_false
+  end
+
   describe "#generate_password_reset_token" do
     let(:user) { Fabricate(:user) }
 

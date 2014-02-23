@@ -1,4 +1,4 @@
-class FollowshipsController < ApplicationController
+class FollowshipsController < AuthenticatedController
 
   def index
     @followships = current_user.followships

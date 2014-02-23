@@ -1,4 +1,4 @@
-class InvitationsController < ApplicationController
+class InvitationsController < AuthenticatedController
   def new
     @invitation = Invitation.new
   end

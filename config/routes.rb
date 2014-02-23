@@ -11,6 +11,10 @@ Myflix::Application.routes.draw do
   post 'update_queue', to: 'queue_items#update_queue'
   get 'people', to: 'followships#index'
 
+  namespace :admin do
+    resources :videos, only: [:new, :create]
+  end
+
   resources :videos, only: [:index, :show] do
     collection do
       post 'search', to: 'videos#search'

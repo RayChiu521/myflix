@@ -1,4 +1,4 @@
-class VideosController < ApplicationController
+class VideosController < AuthenticatedController
 
   before_action :set_video, only: [:show]
 

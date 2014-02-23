@@ -1,4 +1,4 @@
-class PasswordResetsController < ApplicationController
+class PasswordResetsController < AuthenticatedController
   skip_before_action :require_user, only: [:show, :create, :expired_token]
 
   def show

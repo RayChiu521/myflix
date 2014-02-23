@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
   has_many :followers, class_name: "Followship", foreign_key: "leader_id"
   has_many :reset_password_tokens
 
+  before_create :default_actor
+
   def normalize_queue_item_positions
     queue_items.each_with_index do |queue_item, index|
       queue_item.update_attributes(position: (index + 1))
@@ -60,5 +62,10 @@ private
 
   def token_expired_in_hour
     Time.now + 1.hour
+  end
+
+  def default_actor
+    self.admin ||= false
+    true
   end
 end

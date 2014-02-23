@@ -13,6 +13,9 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 gem 'figaro'
 gem 'sidekiq'
 gem 'foreman'
+gem 'fog'
+gem 'carrierwave'
+gem 'mini_magick'
 
 group :development do
   gem 'sqlite3'

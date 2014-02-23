@@ -1,4 +1,4 @@
-class UiController < ApplicationController
+class UiController < AuthenticatedController
   skip_before_action :require_user
 
   before_filter do
