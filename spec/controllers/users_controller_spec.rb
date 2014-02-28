@@ -15,6 +15,12 @@ describe UsersController do
     after { ActionMailer::Base.deliveries.clear }
 
     context "with valid input" do
+      let(:charge) { double(:charge, successful?: true) }
+
+      before do
+        StripeWrapper::Charge.stub(:create).and_return(charge)
+      end
+
       it "creates the user" do
         post :create, user: user_hash
         expect(User.count).to eq(1)
@@ -66,6 +72,12 @@ describe UsersController do
     end
 
     context "mail sending" do
+      let(:charge) { double(:charge, successful?: true) }
+
+      before do
+        StripeWrapper::Charge.stub(:create).and_return(charge)
+      end
+
       it "sends out the mail to the user with valid inputs" do
         post :create, user: user_hash
         expect(ActionMailer::Base.deliveries.last.to).to eq([user_hash[:email]])

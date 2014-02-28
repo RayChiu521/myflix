@@ -1,7 +1,7 @@
 require "spec_helper"
 
 feature "User invites friends" do
-  scenario "user successfully invites a friend and invitation is accepted" do
+  scenario "user successfully invites a friend and invitation is accepted", { js: true, vcr: true } do
     monica = Fabricate(:user)
     sign_in(monica)
 
@@ -31,6 +31,7 @@ feature "User invites friends" do
 
     fill_in "Password", with: "password"
     fill_in "Full name", with: "Phoebe Buffay"
+    fill_in_credit_card
     click_button "Sign Up"
   end
 
