@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.stripe.com/v1/charges
     body:
       encoding: US-ASCII
-      string: amount=999&currency=usd&card=tok_103ZyB2Gp7PcNcb0EI0SHu4K&description=
+      string: amount=999&currency=usd&card=tok_103a2E2Gp7PcNcb0u1OzDB1H&description=
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
@@ -31,21 +31,21 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Fri, 28 Feb 2014 10:51:58 GMT
+      - Fri, 28 Feb 2014 15:02:38 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
       - '162'
       Connection:
       - keep-alive
-      Cache-Control:
-      - no-cache, no-store
-      Access-Control-Allow-Credentials:
-      - 'true'
       Access-Control-Max-Age:
       - '300'
+      Access-Control-Allow-Credentials:
+      - 'true'
       Access-Control-Allow-Methods:
       - GET, POST, HEAD, OPTIONS, DELETE
+      Cache-Control:
+      - no-cache, no-store
     body:
       encoding: UTF-8
       string: |
@@ -54,9 +54,9 @@ http_interactions:
             "message": "Your card was declined.",
             "type": "card_error",
             "code": "card_declined",
-            "charge": "ch_103ZyB2Gp7PcNcb0WGwq5ovD"
+            "charge": "ch_103a2E2Gp7PcNcb0cCa0ynbW"
           }
         }
     http_version: 
-  recorded_at: Fri, 28 Feb 2014 10:51:58 GMT
+  recorded_at: Fri, 28 Feb 2014 15:02:39 GMT
 recorded_with: VCR 2.8.0

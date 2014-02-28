@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.stripe.com/v1/charges
     body:
       encoding: US-ASCII
-      string: amount=999&currency=usd&card=tok_103ZyJ2Gp7PcNcb0ZwrOXAvT&description=
+      string: amount=999&currency=usd&card=tok_103a2E2Gp7PcNcb050wAW0vW&description=
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
@@ -31,7 +31,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Fri, 28 Feb 2014 10:59:26 GMT
+      - Fri, 28 Feb 2014 15:02:36 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -52,16 +52,16 @@ http_interactions:
       encoding: UTF-8
       string: |
         {
-          "id": "ch_103ZyJ2Gp7PcNcb0kYDVa50k",
+          "id": "ch_103a2E2Gp7PcNcb0GKtZcfH3",
           "object": "charge",
-          "created": 1393585165,
+          "created": 1393599756,
           "livemode": false,
           "paid": true,
           "amount": 999,
           "currency": "usd",
           "refunded": false,
           "card": {
-            "id": "card_103ZyJ2Gp7PcNcb0fiGW9SMd",
+            "id": "card_103a2E2Gp7PcNcb0lS99NooA",
             "object": "card",
             "last4": "4242",
             "type": "Visa",
@@ -83,7 +83,7 @@ http_interactions:
           },
           "captured": true,
           "refunds": [],
-          "balance_transaction": "txn_103ZyJ2Gp7PcNcb0AbMqj6jG",
+          "balance_transaction": "txn_103a2E2Gp7PcNcb04v7WDUah",
           "failure_message": null,
           "failure_code": null,
           "amount_refunded": 0,
@@ -94,5 +94,5 @@ http_interactions:
           "metadata": {}
         }
     http_version: 
-  recorded_at: Fri, 28 Feb 2014 10:59:26 GMT
+  recorded_at: Fri, 28 Feb 2014 15:02:36 GMT
 recorded_with: VCR 2.8.0
