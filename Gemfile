@@ -44,6 +44,7 @@ group :test do
   gem 'faker'
   gem 'capybara', '2.1.0'
   gem 'capybara-email', '2.1.2'
+  gem 'capybara-webkit'
   gem 'launchy'
   gem 'vcr'
   gem 'webmock', '1.15.2'
