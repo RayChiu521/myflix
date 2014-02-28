@@ -7,6 +7,9 @@ feature "User invites friends" do
 
     invite_a_friend
     friend_accepts_invitation
+
+    sleep 3
+
     friend_signs_in
 
     friend_should_follow(monica)
