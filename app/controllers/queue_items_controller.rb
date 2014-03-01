@@ -44,7 +44,7 @@ private
 
   def update_queue_items
     return unless params[:queue_items]
-    ActiveRecord::Base.transaction do
+    ActiveRecord::Base.transaction(requires_new: true) do
       params[:queue_items].each do |key, value|
         queue_item = QueueItem.find(key)
         queue_item.update_attributes!(position: value[:position], rating: value[:rating]) if queue_item.creator == current_user

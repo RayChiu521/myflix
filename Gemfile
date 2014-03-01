@@ -16,6 +16,7 @@ gem 'foreman'
 gem 'fog'
 gem 'carrierwave'
 gem 'mini_magick'
+gem 'stripe'
 
 group :development do
   gem 'sqlite3'
@@ -41,7 +42,12 @@ group :test do
   gem 'shoulda-matchers'
   gem 'fabrication'
   gem 'faker'
-  gem 'capybara'
+  gem 'capybara', '2.1.0'
+  gem 'capybara-email', '2.1.2'
+  gem 'capybara-webkit'
   gem 'launchy'
-  gem 'capybara-email'
+  gem 'vcr'
+  gem 'webmock', '1.15.2'
+  gem 'selenium-webdriver'
+  gem 'database_cleaner'
 end

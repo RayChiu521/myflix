@@ -34,3 +34,10 @@ end
 def expect_content(contenx_text)
   page.should have_content contenx_text
 end
+
+def fill_in_credit_card(options = {})
+  fill_in "Credit Card Number", with: options[:card] || "4242424242424242"
+  fill_in "Security Code", with: options[:security_code] || "123"
+  select "12 - December", from: "date_month"
+  select "#{(DateTime.now.year + 1).to_s}", from: "date_year"
+end
