@@ -7,9 +7,6 @@ feature "User invites friends" do
 
     invite_a_friend
     friend_accepts_invitation
-
-    sleep 3
-
     friend_signs_in
 
     friend_should_follow(monica)
@@ -37,6 +34,8 @@ feature "User invites friends" do
     fill_in_credit_card(card: "4242424242424242")
 
     click_button "Sign Up"
+
+    expect_content "User was created."
   end
 
   def friend_signs_in
