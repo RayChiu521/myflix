@@ -33,4 +33,27 @@ describe Video do
       expect(Video.search_by_title("")).to eq([])
     end
   end
+
+  describe "#rating" do
+    it "returns a review rating if has only one review" do
+      review = Fabricate(:review, rating: 5)
+      video = Fabricate(:video, reviews: [review])
+      expect(video.rating).to eq(5)
+    end
+
+    it "returns an average rating of multiple reviews" do
+      review1 = Fabricate(:review, rating: 5)
+      review2 = Fabricate(:review, rating: 1)
+      video = Fabricate(:video, reviews: [review1, review2])
+      expect(video.rating).to eq(3)
+    end
+
+    it "rounds off to the 1st decimal place" do
+      review1 = Fabricate(:review, rating: 5)
+      review2 = Fabricate(:review, rating: 3)
+      review3 = Fabricate(:review, rating: 3)
+      video = Fabricate(:video, reviews: [review1, review2, review3])
+      expect(video.rating).to eq(3.7)
+    end
+  end
 end
