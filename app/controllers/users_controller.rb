@@ -11,19 +11,12 @@ class UsersController < AuthenticatedController
 
   def create
     @user = User.new(user_params)
+    userSignUp = UserSignUp.new(@user, params[:stripeToken], params[:invitation_token])
 
-    if @user.valid?
-      charge = handle_charge_credit_card(@user)
-      if charge.successful?
-        @user.save
-        handle_invitation(@user)
-        AppMailer.delay.welcome_email(@user)
-        redirect_to sign_in_path, notice: 'User was created.'
-      else
-        flash.now[:alert] = charge.failure_message
-        render :new
-      end
+    if userSignUp.sign_up
+      redirect_to sign_in_path, notice: 'User was created.'
     else
+      flash.now[:alert] = userSignUp.error_message
       render :new
     end
   end
@@ -51,21 +44,4 @@ private
   def set_user
     @user = User.find(params[:id])
   end
-
-  def handle_invitation(user)
-    if params[:invitation_token].present?
-      invitation = Invitation.where(token: params[:invitation_token]).first
-      invitation.invitor.bifollow!(user)
-      invitation.update_attributes(token: nil)
-    end
-  end
-
-  def handle_charge_credit_card(user)
-    StripeWrapper::Charge.create(
-      amount: 999,
-      card: params[:stripeToken],
-      description: "One year charge for #{user.email}"
-    )
-  end
-
 end
