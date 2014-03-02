@@ -11,12 +11,12 @@ class UsersController < AuthenticatedController
 
   def create
     @user = User.new(user_params)
-    userSignUp = UserSignUp.new(@user, params[:stripeToken], params[:invitation_token])
+    userSignup = UserSignup.new(@user).sign_up(params[:stripeToken], params[:invitation_token])
 
-    if userSignUp.sign_up
+    if userSignup.successful?
       redirect_to sign_in_path, notice: 'User was created.'
     else
-      flash.now[:alert] = userSignUp.error_message
+      flash.now[:alert] = userSignup.error_message
       render :new
     end
   end
