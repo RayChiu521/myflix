@@ -13,9 +13,7 @@ class Video < ActiveRecord::Base
     where(["title LIKE ?", "%#{search_term}%"]).order("created_at DESC")
   end
 
-  def rating
-    return "N/A" if reviews.blank?
-    (reviews.collect(&:rating).sum.to_f / reviews.length).round(2)
+  def decorate
+    VideoDecorator.new(self)
   end
-
 end
