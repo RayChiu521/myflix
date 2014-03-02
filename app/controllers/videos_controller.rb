@@ -19,6 +19,6 @@ class VideosController < AuthenticatedController
 private
 
   def set_video
-    @video = Video.find(params[:id])
+    @video = Video.find(params[:id]).decorate
   end
 end

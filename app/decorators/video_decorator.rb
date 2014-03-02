@@ -1,13 +1,6 @@
-class VideoDecorator
+class VideoDecorator < Draper::Decorator
 
-  extend Forwardable
-
-  def_delegator :@video, :reviews
-  attr_reader :video
-
-  def initialize(video)
-    @video = video
-  end
+  delegate_all
 
   def rating
     return "N/A" if reviews.blank?
