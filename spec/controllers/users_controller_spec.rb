@@ -10,58 +10,23 @@ describe UsersController do
   end
 
   describe "POST create" do
-    let(:user_hash) { Fabricate.attributes_for(:user) }
 
-    after { ActionMailer::Base.deliveries.clear }
+    let(:new_user) { Fabricate.attributes_for(:user) }
 
-    context "with valid user data and valid credit card" do
-      let(:charge) { double(:charge, successful?: true) }
-
-      before do
-        StripeWrapper::Charge.should_receive(:create).and_return(charge)
-      end
-
-      it "creates the user" do
-        post :create, user: user_hash
-        expect(User.count).to eq(1)
-      end
-
+    context "successful user sign up" do
       it "redirects to the sign in page" do
-        post :create, user: user_hash
+        userSignup = double(:user_sign_up, successful?: true)
+        UserSignup.any_instance.should_receive(:sign_up).and_return(userSignup)
+        post :create, user: new_user
         expect(response).to redirect_to sign_in_path
-      end
-
-      context "with invitation" do
-        let(:monica) { Fabricate(:user) }
-        let(:invitation) { Fabricate(:invitation, invitor: monica, recipient_email: user_hash[:email]) }
-
-        it "makes the user follow the invitor" do
-          post :create, user: user_hash, invitation_token: invitation.token
-          expect(assigns(:user).reload.followed?(monica)).to be_true
-        end
-
-        it "makes the invitor follow the user" do
-          post :create, user: user_hash, invitation_token: invitation.token
-          expect(monica.followed?(assigns(:user))).to be_true
-        end
-
-        it "expires the invitation upon accpetance" do
-          post :create, user: user_hash, invitation_token: invitation.token
-          expect(invitation.reload.token).to be_nil
-        end
       end
     end
 
-    context "with valid user data but invalid credit card" do
-      let(:charge) { double(:charge, successful?: false, failure_message: 'Your card was declined') }
-
+    context "failed user sign up" do
       before do
-        StripeWrapper::Charge.should_receive(:create).and_return(charge)
-        post :create, user: user_hash, stripeToken: '123456'
-      end
-
-      it "does not create a user" do
-        expect(User.count).to eq(0)
+        userSignup = double(:user_sign_up, successful?: false, error_message: "An error message")
+        UserSignup.any_instance.should_receive(:sign_up).and_return(userSignup)
+        post :create, user: new_user
       end
 
       it "renders the :new template" do
@@ -73,54 +38,7 @@ describe UsersController do
       end
 
       it "sets flash alert message" do
-        expect(flash[:alert]).to be_present
-      end
-    end
-
-    context "with invalid user data" do
-      before do
-        user_hash[:email] = nil
-        StripeWrapper::Charge.should_not_receive(:create)
-        post :create, user: user_hash, stripeToken: '123456'
-      end
-
-      it "does not create the user" do
-        expect(User.count).to eq(0)
-      end
-
-      it "renders the :new template" do
-        expect(response).to render_template :new
-      end
-
-      it "sets the @user" do
-        expect(assigns(:user)).to be_a_new(User)
-      end
-
-      it "does not charge the credit card" do
-      end
-    end
-
-    context "mail sending" do
-      let(:charge) { double(:charge, successful?: true) }
-
-      before do
-        StripeWrapper::Charge.stub(:create).and_return(charge)
-      end
-
-      it "sends out the mail to the user with valid inputs" do
-        post :create, user: user_hash
-        expect(ActionMailer::Base.deliveries.last.to).to eq([user_hash[:email]])
-      end
-
-      it "sends out the email containing the user's name with valid inputs" do
-        post :create, user: user_hash
-        expect(ActionMailer::Base.deliveries.last.body).to include(user_hash[:full_name])
-      end
-
-      it "does not send out email with invalid inputs" do
-        user_hash[:email] = nil
-        post :create, user: user_hash
-        expect(ActionMailer::Base.deliveries).to be_empty
+        expect(flash.now[:alert]).to be_present
       end
     end
   end
