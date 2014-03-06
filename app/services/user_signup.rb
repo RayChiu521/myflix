@@ -8,14 +8,15 @@ class UserSignup
 
   def sign_up(stripeToken, invitation_token = nil)
     if @user.valid?
-      charge = handle_charge_credit_card(stripeToken)
-      if charge.successful?
+      result = handle_create_stripe_customer(stripeToken)
+      if result.successful?
+        @user.stripe_customer_id = result.id
         @user.save
         handle_invitation(invitation_token)
         AppMailer.delay.welcome_email(@user)
         @status = :success
       else
-        @error_message = charge.failure_message
+        @error_message = result.failure_message
         @status = :failed
       end
     else
@@ -40,11 +41,11 @@ private
     end
   end
 
-  def handle_charge_credit_card(stripeToken)
-    StripeWrapper::Charge.create(
-      amount: 999,
+  def handle_create_stripe_customer(stripeToken)
+    StripeWrapper::Customer.create(
       card: stripeToken,
-      description: "One year charge for #{@user.email}"
+      email: @user.email,
+      description: "Subscripts by #{@user.email}"
     )
   end
 end

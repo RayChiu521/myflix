@@ -6,13 +6,17 @@ describe UserSignup do
   let(:new_user) { Fabricate.build(:user) }
 
   context "with valid user data and valid credit card" do
-    let(:charge) { double(:charge, successful?: true) }
+    let(:subscription) { double(:subscription, successful?: true, id: 'stripe custome id') }
 
     before do
-      StripeWrapper::Charge.should_receive(:create).and_return(charge)
+      StripeWrapper::Customer.should_receive(:create).and_return(subscription)
     end
 
     after { ActionMailer::Base.deliveries.clear }
+
+    it "should receive StripeWrapper::Customer.create" do
+      UserSignup.new(new_user).sign_up("stripe_token")
+    end
 
     it "creates the user" do
       UserSignup.new(new_user).sign_up("stripe_token")
@@ -27,6 +31,11 @@ describe UserSignup do
     it "sends out the email containing the user's name with valid inputs" do
       UserSignup.new(new_user).sign_up("stripe_token")
       expect(ActionMailer::Base.deliveries.last.body).to include(new_user.full_name)
+    end
+
+    it "sets stripe customer id to user" do
+      UserSignup.new(new_user).sign_up("stripe_token")
+      expect(User.last.stripe_customer_id).to be_present
     end
 
     context "with invitation" do
@@ -51,9 +60,16 @@ describe UserSignup do
   end
 
   context "with valid user data but invalid credit card" do
+    before do
+      subscription = double(:subscription, successful?: false, failure_message: 'Your card was declined')
+      StripeWrapper::Customer.should_receive(:create).and_return(subscription)
+    end
+
+    it "should receive StripeWrapper::Customer.create" do
+      UserSignup.new(new_user).sign_up("stripe_token")
+    end
+
     it "does not create a user" do
-      charge = double(:charge, successful?: false, failure_message: 'Your card was declined')
-      StripeWrapper::Charge.should_receive(:create).and_return(charge)
       UserSignup.new(new_user).sign_up("stripe_token")
       expect(User.count).to eq(0)
     end
@@ -62,18 +78,20 @@ describe UserSignup do
   context "with invalid user data" do
     before do
       new_user.email = nil
-      StripeWrapper::Charge.should_not_receive(:create)
+      StripeWrapper::Customer.should_not_receive(:create)
+    end
+
+    it "should not receive StripeWrapper::Customer.create" do
       UserSignup.new(new_user).sign_up("stripe_token")
     end
 
     it "does not create the user" do
+      UserSignup.new(new_user).sign_up("stripe_token")
       expect(User.count).to eq(0)
     end
 
-    it "does not charge the credit card" do
-    end
-
     it "does not send out email with invalid inputs" do
+      UserSignup.new(new_user).sign_up("stripe_token")
       expect(ActionMailer::Base.deliveries).to be_empty
     end
   end
