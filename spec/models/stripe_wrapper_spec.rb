@@ -1,41 +1,51 @@
 require 'spec_helper'
 
 describe StripeWrapper do
+
+  let(:valid_card_token) do
+    Stripe::Token.create(
+      :card => {
+        :number => '4242424242424242',
+        :exp_month => 2,
+        :exp_year => (DateTime.now + 1.year).year,
+        :cvc => '314'
+      },
+    ).id
+  end
+
+  let(:declined_card_token) do
+    Stripe::Token.create(
+      :card => {
+        :number => '4000000000000002',
+        :exp_month => 2,
+        :exp_year => (DateTime.now + 1.year).year,
+        :cvc => '314'
+      },
+    ).id
+  end
+
   describe StripeWrapper::Charge do
     describe ".create" do
       before do
         StripeWrapper.set_api_key
       end
-      let(:token) do
-        Stripe::Token.create(
-          :card => {
-            :number => card_number,
-            :exp_month => 2,
-            :exp_year => (DateTime.now + 1.year).year,
-            :cvc => "314"
-          },
-        ).id
-      end
 
       context "with valid card" do
-        let(:card_number) { "4242424242424242" }
-
         it "makes a successful charge", :vcr do
-          charge = StripeWrapper::Charge.create(amount: 1000, card: token)
+          charge = StripeWrapper::Charge.create(amount: 1000, card: valid_card_token)
           expect(charge.successful?).to be_true
         end
       end
 
       context "with invalid card" do
-        let(:card_number) { "4000000000000002" }
-        let(:charge) { StripeWrapper::Charge.create(amount: 1000, card: token) }
+        subject { StripeWrapper::Charge.create(amount: 1000, card: declined_card_token) }
 
         it "does not charge successfully", :vcr do
-          expect(charge.successful?).to be_false
+          expect(subject.successful?).to be_false
         end
 
         it "has failure message", :vcr do
-          expect(charge.failure_message).to be_present
+          expect(subject.failure_message).to be_present
         end
       end
     end
@@ -43,23 +53,15 @@ describe StripeWrapper do
 
   describe StripeWrapper::Customer do
     describe ".create" do
+
+      let(:monica) { Fabricate(:user)}
+
       before do
         StripeWrapper.set_api_key
       end
-      let(:token) do
-        Stripe::Token.create(
-          :card => {
-            :number => card_number,
-            :exp_month => 2,
-            :exp_year => (DateTime.now + 1.year).year,
-            :cvc => "314"
-          },
-        ).id
-      end
 
       context "with valid card", :vcr do
-        let(:card_number) { "4242424242424242" }
-        subject { StripeWrapper::Customer.create(card: token) }
+        subject { StripeWrapper::Customer.create(card: valid_card_token, user: monica) }
 
         it { should be_successful }
 
@@ -69,8 +71,7 @@ describe StripeWrapper do
       end
 
       context "with invalid card", :vcr do
-        let(:card_number) { "4000000000000002" }
-        subject { StripeWrapper::Customer.create(card: token) }
+        subject { StripeWrapper::Customer.create(card: declined_card_token, user: monica) }
 
         it { should_not be_successful }
 

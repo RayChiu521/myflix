@@ -2,9 +2,9 @@ module StripeWrapper
   class Charge
     attr_reader :response, :status
 
-    def initialize(response, status)
-      @response = response
-      @status = status
+    def initialize(options)
+      @response = options[:response]
+      @status = options[:status]
     end
 
     def self.create(options = {})
@@ -14,11 +14,11 @@ module StripeWrapper
           :amount => options[:amount],
           :currency => "usd",
           :card => options[:card],
-          :description => options.has_key?("description") ? options[:description] : ""
+          :description => options[:description].presence || ''
         )
-        new(response, :success)
+        new(response: response, status: :success)
       rescue Stripe::CardError => e
-        new(e, :failure)
+        new(response: e, status: :failure)
       end
     end
 
@@ -38,9 +38,9 @@ module StripeWrapper
   class Customer
     attr_reader :response, :status
 
-    def initialize(response, status)
-      @response = response
-      @status = status
+    def initialize(options)
+      @response = options[:response]
+      @status = options[:status]
     end
 
     def self.create(options = {})
@@ -48,13 +48,13 @@ module StripeWrapper
       begin
         response = Stripe::Customer.create(
           :plan => 'base',
-          :email => options[:email].presence || '',
+          :email => options[:user].email,
           :card => options[:card],
-          :description => options[:description].presence || '',
+          :description => "Subscripts by #{options[:user].full_name}"
         )
-        new(response, :success)
+        new(response: response, status: :success)
       rescue Stripe::CardError => e
-        new(e, :failure)
+        new(response: e, status: :failure)
       end
     end
 

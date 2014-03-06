@@ -44,8 +44,7 @@ private
   def handle_create_stripe_customer(stripeToken)
     StripeWrapper::Customer.create(
       card: stripeToken,
-      email: @user.email,
-      description: "Subscripts by #{@user.email}"
+      user: @user
     )
   end
 end
