@@ -1,4 +1,7 @@
 Myflix::Application.routes.draw do
+
+  mount StripeEvent::Engine => '/stripe_events'
+
   get 'ui(/:action)', controller: 'ui'
   get 'genre', to: 'categories#index'
   get 'register', to: 'users#new'
@@ -13,6 +16,7 @@ Myflix::Application.routes.draw do
 
   namespace :admin do
     resources :videos, only: [:new, :create]
+    resources :payments, only: [:index]
   end
 
   resources :videos, only: [:index, :show] do

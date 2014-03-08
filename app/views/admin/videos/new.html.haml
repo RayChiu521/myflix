@@ -3,11 +3,7 @@
     .row
       .col-md-10.col-md-offset-1
         = bootstrap_form_for [:admin, @video], style: :horizontal, left: 'col-sm-3', right: 'col-sm-6' do |f|
-          %ul.nav.nav-tabs
-            %li
-              %a(href="/ui/admin_views_payments") Recent Payments
-            %li.active
-              %a(href="") Add a New Video
+          = render 'shared/admin_nav'
           %br
           %fieldset
             = f.text_field :title
