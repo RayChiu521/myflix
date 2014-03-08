@@ -15,4 +15,13 @@ feature "User sign in" do
     click_on "Sign in"
     expect_content("There's something wrong with your email or password.")
   end
+
+  scenario "with deactivated user" do
+    henryk.deactivate!
+
+    sign_in(henryk)
+
+    not_expect_content henryk.full_name
+    expect_content "Your account has been suspended, please contact customer service."
+  end
 end

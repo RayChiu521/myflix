@@ -10,8 +10,12 @@ class SessionsController < AuthenticatedController
   def create
     user = User.find_by_email(params[:user][:email])
     if user && user.authenticate(params[:user][:password])
-      session[:user_id] = user.id
-      redirect_to home_path, notice: "You've logged in."
+      if user.active?
+        session[:user_id] = user.id
+        redirect_to home_path, notice: "You've logged in."
+      else
+        redirect_to sign_in_path, alert: "Your account has been suspended, please contact customer service."
+      end
     else
       redirect_to sign_in_path, alert: "There's something wrong with your email or password."
     end

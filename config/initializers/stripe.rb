@@ -5,4 +5,10 @@ StripeEvent.configure do |events|
     user = User.where(stripe_customer_id: event.data.object.customer).first
     Payment.create(user: user, amount: event.data.object.amount, reference_id: event.data.object.id)
   end
+
+  events.subscribe 'charge.failed' do |event|
+    user = User.where(stripe_customer_id: event.data.object.customer).first
+    user.deactivate!
+    AppMailer.delay.charge_failed(user)
+  end
 end

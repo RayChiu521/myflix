@@ -127,4 +127,12 @@ describe User do
       expect(monica.bifollow!(monica)).to be_false
     end
   end
+
+  describe "#deactivate!" do
+    it "deactivates an active user" do
+      monica = Fabricate(:user)
+      monica.deactivate!
+      expect(monica.reload).not_to be_active
+    end
+  end
 end

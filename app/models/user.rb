@@ -58,6 +58,10 @@ class User < ActiveRecord::Base
     leader.follow!(self)
   end
 
+  def deactivate!
+    update_column(:active, false)
+  end
+
 private
 
   def token_expired_in_hour

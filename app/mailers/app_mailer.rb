@@ -15,4 +15,8 @@ class AppMailer < ApplicationMailer
     mail to: invitation.recipient_email, subject: "Invitation to join MyFLiX"
   end
 
+  def charge_failed(user)
+    @user = user
+    mail to: user.email, subject: "There is something wrong with your credit card"
+  end
 end
