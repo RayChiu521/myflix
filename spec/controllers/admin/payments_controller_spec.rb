@@ -18,7 +18,7 @@ describe Admin::PaymentsController do
       payment1 = Fabricate(:payment)
       payment2 = Fabricate(:payment)
       get :index
-      expect(assigns(:payments)).to match_array([payment1, payment2 ])
+      expect(assigns(:payments)).to match_array([payment1, payment2])
     end
   end
 end

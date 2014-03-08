@@ -32,7 +32,11 @@ def click_on_video_on_home_page(video)
 end
 
 def expect_content(contenx_text)
-  page.should have_content contenx_text
+  expect(page).to have_content contenx_text
+end
+
+def not_expect_content(contenx_text)
+  expect(page).not_to have_content contenx_text
 end
 
 def fill_in_credit_card(options = {})
