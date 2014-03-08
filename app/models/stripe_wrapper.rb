@@ -8,7 +8,6 @@ module StripeWrapper
     end
 
     def self.create(options = {})
-      StripeWrapper.set_api_key
       begin
         response = Stripe::Charge.create(
           :amount => options[:amount],
@@ -31,10 +30,6 @@ module StripeWrapper
     end
   end
 
-  def self.set_api_key
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-  end
-
   class Customer
     attr_reader :response, :status
 
@@ -44,7 +39,6 @@ module StripeWrapper
     end
 
     def self.create(options = {})
-      StripeWrapper.set_api_key
       begin
         response = Stripe::Customer.create(
           :plan => 'base',

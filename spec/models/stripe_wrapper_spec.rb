@@ -26,9 +26,6 @@ describe StripeWrapper do
 
   describe StripeWrapper::Charge do
     describe ".create" do
-      before do
-        StripeWrapper.set_api_key
-      end
 
       context "with valid card" do
         it "makes a successful charge", :vcr do
@@ -55,10 +52,6 @@ describe StripeWrapper do
     describe ".create" do
 
       let(:monica) { Fabricate(:user)}
-
-      before do
-        StripeWrapper.set_api_key
-      end
 
       context "with valid card", :vcr do
         subject { StripeWrapper::Customer.create(card: valid_card_token, user: monica) }
